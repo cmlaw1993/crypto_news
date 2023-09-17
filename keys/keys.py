@@ -1,0 +1,2 @@
+
+NEWSDATA_KEY = ""
