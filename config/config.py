@@ -1,11 +1,12 @@
-from datetime import timezone, timedelta
+from datetime import datetime
 import os
 
+ACTIVE_DATETIME = datetime.strptime(os.getenv('ACTIVE_DATETIME'), '%Y%m%d')
 
-VARDATA_FOLDER = f"{os.getcwd()}/vardata"
+VARDATA_FOLDER = f"{os.getcwd()}/vardata/{ACTIVE_DATETIME.strftime('%Y%m%d')}"
 RAW_ARTICLES_FOLDER = f"{VARDATA_FOLDER}/0_raw_articles"
-ACCEPTED_ARTICLES_FOLDER = f"{VARDATA_FOLDER}/1_accepted_articles"
-REJECTED_ARTICLES_FOLDER = f"{VARDATA_FOLDER}/2_rejected_articles"
+REJECTED_ARTICLES_FOLDER = f"{VARDATA_FOLDER}/1_rejected_articles"
+SELECTED_ARTICLES_FOLDER = f"{VARDATA_FOLDER}/2_selected_articles"
 
 FILTER_SELECT_BY_SOURCE_ID = (
     "beincrypto",
@@ -31,7 +32,7 @@ FILTER_SELECT_BY_SOURCE_ID = (
     "watcherguru",
 )
 
-FILTER_REMOVE_BY_KEYWORDS = (
+FILTER_REJECT_BY_KEYWORDS = (
     "analysis",
     "prediction",
     "sponsored",
@@ -40,15 +41,15 @@ FILTER_REMOVE_BY_KEYWORDS = (
     "industry talk",
 )
 
-FILTER_REMOVE_BY_TITLE = (
+FILTER_REJECT_BY_TITLE = (
     "?",
 )
 
-FILTER_REMOVE_BY_CONTENT = (
+FILTER_REJECT_BY_CONTENT = (
     "The Airdrop",
 )
 
-FILTER_REMOVE_BY_LINK = (
+FILTER_REJECT_BY_LINK = (
     "cointelegraph.com/magazine",
 )
 

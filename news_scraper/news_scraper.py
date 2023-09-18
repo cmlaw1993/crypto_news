@@ -17,22 +17,37 @@ if __name__ == "__main__":
     logging.info(f"News scraper started")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-
     logging.info(f"[BEGIN] Loading config")
 
+    logging.info(f"active_datetime: {config.ACTIVE_DATETIME}")
+    logging.info(f"vardata_folder: {config.VARDATA_FOLDER}")
     logging.info(f"raw_articles_folder: {config.RAW_ARTICLES_FOLDER}")
 
     logging.info(f"[END  ] Loading config")
 
     logging.info(f"------------------------------------------------------------------------------------------")
+    logging.info(f"[BEGIN] Check vardata_folder")
 
+    if os.path.exists(config.VARDATA_FOLDER):
+        logging.info("vardata_folder exists")
+    else:
+        logging.info("vardata_folder does not exists")
+        try:
+            os.mkdir(config.VARDATA_FOLDER)
+        except:
+            logging.error(f"Unable to create vardata_folder: {config.VARDATA_FOLDER}")
+
+        logging.info(f"Created vardata_folder: {config.VARDATA_FOLDER}")
+
+    logging.info(f"[END  ] Check vardata_folder")
+
+    logging.info(f"------------------------------------------------------------------------------------------")
     logging.info(f"[BEGIN] Check raw_articles_folder")
 
     if os.path.exists(config.RAW_ARTICLES_FOLDER):
         logging.info("raw_articles_folder exists")
     else:
         logging.info("raw_articles_folder does not exists")
-
         try:
             os.mkdir(config.RAW_ARTICLES_FOLDER)
         except:
@@ -43,60 +58,20 @@ if __name__ == "__main__":
     logging.info(f"[END  ] Check raw_articles_folder")
 
     logging.info(f"------------------------------------------------------------------------------------------")
+    logging.info(f"[BEGIN] Calculated start and end datetime")
 
-    logging.info(f"[BEGIN] Get last_datetime")
+    start_datetime = config.ACTIVE_DATETIME
+    end_datetime = config.ACTIVE_DATETIME + timedelta(days=1)
 
-    datetime_files = os.listdir(config.RAW_ARTICLES_FOLDER)
+    logging.info(f"start_datetime: {start_datetime.strftime('%Y%m%d_%H%M%S')}")
+    logging.info(f"end_datetime:   {end_datetime.strftime('%Y%m%d_%H%M%S')}")
 
-    for dt_file in datetime_files:
-        if ".tmp" in dt_file:
-            shutil.rmtree(f"{config.RAW_ARTICLES_FOLDER}/{dt_file}")
-            datetime_files.remove(dt_file)
-
-    if len(datetime_files) == 0:
-        datetime_files.append("19700101")
-
-    datetime_files.sort()
-
-    last_datetime = datetime.strptime(datetime_files[-1], '%Y%m%d')
-    last_datetime += timedelta(days=1)
-
-    logging.info(f"last_datetime: {last_datetime.strftime('%Y%m%d_%H%M%S')}")
-
-    logging.info(f"[END  ] Get last_datetime")
+    logging.info(f"[END  ] Calculated start and end datetime")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-
-    logging.info(f"[BEGIN] Get curr_datetime")
-
-    curr_datetime = current_utc_time = datetime.now()
-    curr_datetime = curr_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    logging.info(f"curr_datetime: {curr_datetime.strftime('%Y%m%d_%H%M%S')}")
-
-    logging.info(f"[END  ] Get curr_datetime")
-
-    logging.info(f"------------------------------------------------------------------------------------------")
-
-    logging.info(f"[BEGIN] Verifying last_datetime to curr_datetime delta")
-
-    delta = curr_datetime - last_datetime
-
-    logging.info(f"delta: {delta}")
-
-    if delta < timedelta(days=1):
-        logging.info(f"delta < 1 day, program shall terminate")
-        exit(0)
-
-    logging.info(f"delta >= 1 day, program shall continue")
-
-    logging.info(f"[END  ] Verifying last_datetime to curr_datetime delta")
-
-    logging.info(f"------------------------------------------------------------------------------------------")
-
     logging.info(f"[BEGIN] Scraping news")
 
-    article_dict = dict()
+    articles = list()
     page = None
     response = list()
     published_datetime = 0
@@ -118,55 +93,36 @@ if __name__ == "__main__":
 
             published_datetime = datetime.strptime(result["pubDate"], "%Y-%m-%d %H:%M:%S")
 
-            if not (last_datetime < published_datetime <= curr_datetime):
+            if not (start_datetime < published_datetime <= end_datetime):
                 continue
 
             group_datetime = published_datetime.replace(hour=0, minute=0, second=0, microsecond=0)
             group_datetime = group_datetime.strftime('%Y%m%d')
 
-            if group_datetime not in article_dict:
-                article_dict[group_datetime] = list()
+            articles.insert(0, result)
 
-            article_dict[group_datetime].insert(0, result)
-
-        if published_datetime < last_datetime:
+        if published_datetime < start_datetime:
             break
 
         page = str(response.get("nextPage", None))
         if page == "None":
             break
 
-    for group_datetime, articles in article_dict.items():
+    for article in articles:
 
-        folder = f"{config.RAW_ARTICLES_FOLDER}/{group_datetime}"
-        folder_tmp = f"{folder}.tmp"
+        source = article["source_id"]
+        dt = datetime.strptime(article["pubDate"], '%Y-%m-%d %H:%M:%S').strftime('%Y%m%d_%H%M%S')
+        title = utils.sanitize_file_name(article["title"])
+        title = title.replace(".", "")
 
-        if not os.path.exists(folder_tmp):
-            try:
-                os.makedirs(folder_tmp)
-                logging.info(f"Created folder: {folder_tmp}")
-            except:
-                logging.error(f"Unable to create folder: {folder_tmp}")
+        file_name = f"{config.RAW_ARTICLES_FOLDER}/{source}.{dt}.{title}.json"
+        out_file = open(file_name, "w")
+        json.dump(article, out_file, indent=4)
+        out_file.close()
 
-        for article in articles:
-
-            source = article["source_id"]
-            dt = datetime.strptime(article["pubDate"], '%Y-%m-%d %H:%M:%S').strftime('%Y%m%d_%H%M%S')
-            title = utils.sanitize_file_name(article["title"])
-            title = title.replace(".", "")
-
-            file_name = f"{folder_tmp}/{source}.{dt}.{title}.json"
-            out_file = open(file_name, "w")
-            json.dump(article, out_file, indent=4)
-            out_file.close()
-
-            logging.info(f"Dumped raw article: {file_name}")
-
-        os.rename(folder_tmp, folder)
-        logging.info(f"Renamed {folder_tmp} to {folder}")
+        logging.info(f"Dumped raw article: {file_name}")
 
     logging.info(f"[END  ] Scraping news")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-
     logging.info(f"News scraper ended")
