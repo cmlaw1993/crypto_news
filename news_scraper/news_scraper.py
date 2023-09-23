@@ -14,13 +14,14 @@ from keys import keys
 if __name__ == "__main__":
 
     log.init_logging()
-    logging.info(f"News scraper started")
+    logging.info(f"news_scraper started")
 
     logging.info(f"------------------------------------------------------------------------------------------")
     logging.info(f"[BEGIN] Loading config")
 
     logging.info(f"active_datetime: {config.ACTIVE_DATETIME}")
     logging.info(f"vardata_folder: {config.VARDATA_FOLDER}")
+    logging.info(f"vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
     logging.info(f"raw_articles_folder: {config.RAW_ARTICLES_FOLDER}")
 
     logging.info(f"[END  ] Loading config")
@@ -40,6 +41,22 @@ if __name__ == "__main__":
         logging.info(f"Created vardata_folder: {config.VARDATA_FOLDER}")
 
     logging.info(f"[END  ] Check vardata_folder")
+
+    logging.info(f"------------------------------------------------------------------------------------------")
+    logging.info(f"[BEGIN] Check vardata_datetime_folder")
+
+    if os.path.exists(config.VARDATA_DATETIME_FOLDER):
+        logging.info("vardata_datetime_folder exists")
+    else:
+        logging.info("vardata_datetime_folder does not exists")
+        try:
+            os.mkdir(config.VARDATA_DATETIME_FOLDER)
+        except:
+            logging.error(f"Unable to create vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
+
+        logging.info(f"Created vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
+
+    logging.info(f"[END  ] Check vardata_datetime_folder")
 
     logging.info(f"------------------------------------------------------------------------------------------")
     logging.info(f"[BEGIN] Check raw_articles_folder")
@@ -125,4 +142,4 @@ if __name__ == "__main__":
     logging.info(f"[END  ] Scraping news")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-    logging.info(f"News scraper ended")
+    logging.info(f"news_scraper ended")

@@ -1,21 +1,22 @@
-from datetime import datetime, timedelta
 import logging
 import shutil
 import json
 import os
 
-from core import log, utils
+from core import log
 from config import config
 
 if __name__ == "__main__":
 
     log.init_logging()
-    logging.info(f"News filter started")
+    logging.info(f"news_filter started")
 
     logging.info(f"------------------------------------------------------------------------------------------")
     logging.info(f"[BEGIN] Loading config")
 
     logging.info(f"active_datetime: {config.ACTIVE_DATETIME}")
+    logging.info(f"vardata_folder: {config.VARDATA_FOLDER}")
+    logging.info(f"vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
     logging.info(f"raw_articles_folder: {config.RAW_ARTICLES_FOLDER}")
     logging.info(f"rejected_articles_folder: {config.REJECTED_ARTICLES_FOLDER}")
     logging.info(f"selected_articles_folder: {config.SELECTED_ARTICLES_FOLDER}")
@@ -23,7 +24,39 @@ if __name__ == "__main__":
     logging.info(f"[END  ] Loading config")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-    logging.info(f"[BEGIN] Recreate rejected_articles_folder")
+    logging.info(f"[BEGIN] Check vardata_folder")
+
+    if os.path.exists(config.VARDATA_FOLDER):
+        logging.info("vardata_folder exists")
+    else:
+        logging.info("vardata_folder does not exists")
+        try:
+            os.mkdir(config.VARDATA_FOLDER)
+        except:
+            logging.error(f"Unable to create vardata_folder: {config.VARDATA_FOLDER}")
+
+        logging.info(f"Created vardata_folder: {config.VARDATA_FOLDER}")
+
+    logging.info(f"[END  ] Check vardata_folder")
+
+    logging.info(f"------------------------------------------------------------------------------------------")
+    logging.info(f"[BEGIN] Check vardata_datetime_folder")
+
+    if os.path.exists(config.VARDATA_DATETIME_FOLDER):
+        logging.info("vardata_datetime_folder exists")
+    else:
+        logging.info("vardata_datetime_folder does not exists")
+        try:
+            os.mkdir(config.VARDATA_DATETIME_FOLDER)
+        except:
+            logging.error(f"Unable to create vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
+
+        logging.info(f"Created vardata_datetime_folder: {config.VARDATA_DATETIME_FOLDER}")
+
+    logging.info(f"[END  ] Check vardata_datetime_folder")
+
+    logging.info(f"------------------------------------------------------------------------------------------")
+    logging.info(f"[BEGIN] Clean rejected_articles_folder")
 
     if os.path.exists(config.REJECTED_ARTICLES_FOLDER):
         shutil.rmtree(f"{config.REJECTED_ARTICLES_FOLDER}")
@@ -35,10 +68,10 @@ if __name__ == "__main__":
     except:
         logging.error(f"Unable to create rejected_articles_folder: {config.REJECTED_ARTICLES_FOLDER}")
 
-    logging.info(f"[END  ] Recreate rejected_articles_folder")
+    logging.info(f"[END  ] Clean rejected_articles_folder")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-    logging.info(f"[BEGIN] Recreate selected_articles_folder")
+    logging.info(f"[BEGIN] Clean selected_articles_folder")
 
     if os.path.exists(config.SELECTED_ARTICLES_FOLDER):
         shutil.rmtree(f"{config.SELECTED_ARTICLES_FOLDER}")
@@ -50,13 +83,13 @@ if __name__ == "__main__":
     except:
         logging.error(f"Unable to create selected_articles_folder: {config.SELECTED_ARTICLES_FOLDER}")
 
-    logging.info(f"[END  ] Recreate selected_articles_folder")
+    logging.info(f"[END  ] Clean selected_articles_folder")
 
     logging.info(f"------------------------------------------------------------------------------------------")
     logging.info(f"[BEGIN] Load raw_articles")
 
     if not os.path.exists(config.RAW_ARTICLES_FOLDER):
-        logging.error(f"raw_articles_dt_folder does not exists: {config.RAW_ARTICLES_FOLDER}")
+        logging.error(f"raw_articles_folder does not exists: {config.RAW_ARTICLES_FOLDER}")
 
     files = os.listdir(config.RAW_ARTICLES_FOLDER)
 
@@ -191,4 +224,4 @@ if __name__ == "__main__":
     logging.info(f"[END  ] Link rejected_articles")
 
     logging.info(f"------------------------------------------------------------------------------------------")
-    logging.info(f"News filter ended")
+    logging.info(f"news_filter ended")
