@@ -1,1 +1,9 @@
 .idea
+_data
+#common/__pycache__
+#common/googleapi/__pycache__
+#common/pydantic/__pycache__
+#config/__pycache__
+#keys/__pycache__
+keys/googleapi
+**/__pycache__

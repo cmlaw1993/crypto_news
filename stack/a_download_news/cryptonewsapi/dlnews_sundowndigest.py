@@ -1,0 +1,93 @@
+from datetime import datetime
+import requests
+import logging
+import pytz
+import yaml
+
+from common import utils
+from common.pydantic.article import Article
+from config import config
+from keys import keys
+
+
+def run(start_dt, end_dt):
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Download news for cryptonewsapi_sundowndigest')
+
+    articles = list()
+
+    page = 0
+
+    while True:
+
+        page += 1
+        if page > config.DOWNLOADNEWS_CRYPTONEWSAPI_MAXPAGES:
+            logging.error(f'Attempted to query past {config.DOWNLOADNEWS_CRYPTONEWSAPI_MAXPAGES} pages')
+
+        url = f'https://cryptonews-api.com/api/v1/sundown-digest?page={page}&token={keys.CRYPTONEWSAPI_KEY}'
+
+        response = None
+        utc_dt = None
+
+        try:
+            response = requests.get(url)
+        except:
+            logging.error(f'Http request error, url:{url}')
+
+        if response.status_code != 200:
+            logging.error(f'Http request returned error, url:{url}, status_code:{response.status_code}, text:{response.text}')
+
+        response_json = response.json()
+        response_data = response_json['data']
+
+        for data in response_data:
+
+            tz_dt = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ')
+            utc_dt = tz_dt.astimezone(pytz.timezone('UTC'))
+
+            if not (start_dt < utc_dt <= end_dt):
+                continue
+
+            datetime_str = utc_dt.strftime('%Y%m%d_%H%M%S')
+            date_str = utc_dt.strftime('%Y%m%d')
+            time_str = utc_dt.strftime('%H%M%S')
+
+            sanitized_headline = utils.sanitize_file_name(data['headline'])
+
+            id = f'article.cryptonewsapi.sundowndigest.cryptonewsapi.{date_str}.{time_str}.{sanitized_headline}.yaml'
+
+            article_data = {
+                'id': id,
+                'title': data['headline'],
+                'content': data['text'],
+                'api': 'cryptonewsapi',
+                'api_type': 'sundowndigest',
+                'source': 'cryptonewsapi',
+                'author': 'cryptonewsapi',
+                'datetime': datetime_str,
+                'date': date_str,
+                'time': time_str,
+            }
+
+            article = Article(**article_data)
+            articles.insert(0, article)
+
+        if utc_dt < start_dt:
+            break
+
+    output_list = list()
+
+    for article in articles:
+
+        output_list.append(f'{config.DOWNLOADNEWS_RELATIVE_FOLDER}/{article.id}')
+
+        file_path = f'{config.DOWNLOADNEWS_FOLDER}/{article.id}'
+        with open(file_path, 'w') as file:
+            yaml.dump(article.model_dump(), file, sort_keys=False)
+
+        logging.info(f'Downloaded: {article.id}')
+
+    logging.info(f'[END  ] Download news for cryptonewsapi_sundowndigest')
+
+    return output_list
