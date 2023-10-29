@@ -20,15 +20,15 @@ def symlink_file(src, dst):
 if __name__ == "__main__":
 
     curr_path = os.path.dirname(os.path.abspath(__file__))
-    code_path = os.path.join(curr_path, "..")
+    code_path = os.path.join(curr_path, "../..")
 
     # Install python requirements
 
-    os.system(f'pip install -r  {os.path.join(curr_path, "data/requirements.txt")}')
+    # os.system(f'pip install -r  {os.path.join(curr_path, "support/requirements.txt")}')
 
     # Setup data symlinks
 
-    data_path = os.path.join(code_path, 'data')
+    data_path = os.path.join(code_path, '_data')
 
     if not os.path.exists(data_path):
         os.makedirs(data_path)
