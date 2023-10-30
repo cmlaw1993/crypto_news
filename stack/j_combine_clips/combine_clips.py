@@ -152,4 +152,4 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'j_combine_clips/combine_clips ended')
 
-    return [[f'{config.COMBINECLIPS_RELATIVE_FOLDER}/combined.mp4']]
+    return [[os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, id)]]

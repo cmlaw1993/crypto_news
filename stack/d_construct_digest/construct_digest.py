@@ -182,6 +182,33 @@ def run(clean, input_list):
                 continue
             break
 
+        # Infer oneliner from news content
+
+        system_template = f'You are a top editor for a cryptocurrency news agency.' \
+                          f' Your target audience include top cryptocurrency traders and fund managers who makes important decisions based on your articles.'
+        system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
+
+        human_template = f'Write a oneline summary {config.CONSTRUCTDIGEST_ONELINER_MIN_NUM_WORDS_PER_SENTENCE} to {config.CONSTRUCTDIGEST_ONELINER_MAX_NUM_WORDS_PER_SENTENCE} words, for the news article below:\n' \
+                         f'\n' \
+                         f'{title}\n' \
+                         f'{article_content}'
+        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
+        prompt = chat_prompt.format_prompt().to_messages()
+
+        res = chat(prompt)
+        oneliner = res.content
+
+        while True:
+            if oneliner[0] == "'" and oneliner[-1] == "'":
+                oneliner = oneliner[1:-1]
+                continue
+            if oneliner[0] == '"' and oneliner[-1] == '"':
+                oneliner = oneliner[1:-1]
+                continue
+            break
+
         # Construct pydantic object
 
         priority = main_topic.id.split('.')[2]
@@ -192,6 +219,7 @@ def run(clean, input_list):
             'main_topic_source_content': main_topic.source_content,
             'title': title,
             'content': sent_tokenize(article_content),
+            'oneliner': oneliner,
             'sources': sources,
             'datetime': config.ACTIVE_DATETIME_STR,
             'date': config.ACTIVE_DATE_STR,

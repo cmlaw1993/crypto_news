@@ -186,6 +186,9 @@ CONSTRUCTDIGEST_CONTENT_MAX_NUM_WORDS_PER_SENTENCE = 16
 CONSTRUCTDIGEST_TITLE_MIN_NUM_WORDS_PER_SENTENCE = 5
 CONSTRUCTDIGEST_TITLE_MAX_NUM_WORDS_PER_SENTENCE = 10
 
+CONSTRUCTDIGEST_ONELINER_MIN_NUM_WORDS_PER_SENTENCE = 12
+CONSTRUCTDIGEST_ONELINER_MAX_NUM_WORDS_PER_SENTENCE = 20
+
 # ----------------------------------------------------------------------------------------------------
 # e_rank_digest
 
@@ -249,8 +252,8 @@ CREATETHUMBNAIL_DUMMY_IMAGE = os.path.join('staticdata', 'dummy', 'dummyThumbnai
 # ----------------------------------------------------------------------------------------------------
 # i_generate_clip/generate_clip
 
-GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'g_generate_clip')
-GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'g_generate_clip')
+GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_generate_clip')
+GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_generate_clip')
 
 GENERATECLIP_MODULES = [
     'primary',

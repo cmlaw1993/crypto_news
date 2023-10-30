@@ -46,6 +46,7 @@ class Digest(BaseModel):
     main_topic_source_content: str
     title: str
     content: List[str]
+    oneliner: str
     sources: List[str]
     datetime: str
     date: str

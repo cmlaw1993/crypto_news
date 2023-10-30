@@ -82,7 +82,7 @@ def run(input_list):
 
         caption_tmp = os.path.join(f'{config.GENERATECLIP_FOLDER}', f'{base_id}.caption.txt')
         with open(caption_tmp, 'w') as file:
-            file.write(digest.title)
+            file.write(digest.oneliner)
         tmps.add(caption_tmp)
 
         ret = os.system(f'convert'
@@ -100,7 +100,7 @@ def run(input_list):
         if os.WEXITSTATUS(ret) != 0:
             logging.error('Error running image magick')
 
-        duration = math.ceil((utils.count_words(digest.title) * sec_per_word_t)
+        duration = math.ceil((utils.count_words(digest.oneliner) * sec_per_word_t)
                              + (2 * slide_t))
 
         # Generate final clip
