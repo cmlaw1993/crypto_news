@@ -1,32 +1,13 @@
 import subprocess
 import logging
+import yaml
 
 from moviepy.editor import *
-import moviepy.audio.fx.all as afx
 
+from common import utils
+from common.pydantic.digest import Digest
+from common.pydantic.upload import Upload, Chapter
 from config import config
-
-
-def get_video_duration(video_path):
-    command = [
-        'ffprobe',
-        '-v', 'error',
-        '-show_entries', 'format=duration',
-        '-of', 'default=noprint_wrappers=1:nokey=1',
-        video_path
-    ]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-    if result.returncode != 0:
-        logging.error('Error getting video duration:', result.stderr)
-        return None
-
-    try:
-        duration = float(result.stdout)
-        return int(round(duration))
-    except ValueError:
-        logging.error('Could not convert duration to float')
-        return None
 
 
 def run(clean, input_list):
@@ -66,26 +47,38 @@ def run(clean, input_list):
     logging.info(f'[END  ] Sort input')
 
     logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Load articles')
+
+    primary_digests = list()
+    secondary_digests = list()
+
+    for digest_file in input_list:
+
+        file_path = os.path.join(config.DATA_FOLDER, digest_file)
+        with open(file_path, 'r') as yaml_file:
+            yaml_data = yaml.safe_load(yaml_file)
+
+        digest = Digest(**yaml_data)
+
+        digest_type = digest_file.split('.')[1]
+        if digest_type == 'primary':
+            primary_digests.append(digest)
+        elif digest_type == 'secondary':
+            secondary_digests.append(digest)
+        else:
+            logging.error(f'Invalid digest type: {digest_type}')
+
+    digests = primary_digests + secondary_digests
+
+    logging.info(f'[END  ] Load articles')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load clips')
 
-    primary_clips = list()
-    secondary_clips = list()
-    all_clips = list()
-    duration = 0
+    clips = list()
 
-    for clip_file in input_list:
-
-        file_path = os.path.join(config.DATA_FOLDER, clip_file)
-
-        clip_type = clip_file.split('.')[1]
-        if clip_type == 'primary':
-            primary_clips.append(file_path)
-        elif clip_type == 'secondary':
-            secondary_clips.append(file_path)
-        else:
-            logging.error(f'Invalid clip_type: {clip_type}')
-
-    all_clips = primary_clips + secondary_clips
+    for digest in digests:
+        clips.append(os.path.join(config.DATA_FOLDER, digest.clip))
 
     logging.info(f'[END  ] Load clips')
 
@@ -93,9 +86,10 @@ def run(clean, input_list):
     logging.info(f'[BEGIN] Add intro and outro')
 
     intro = os.path.join(config.DATA_FOLDER, config.COMBINECLIPS_INTRO)
+    clips.insert(0, intro)
+
     outro = os.path.join(config.DATA_FOLDER, config.COMBINECLIPS_OUTRO)
-    all_clips.insert(0, intro)
-    all_clips.append(outro)
+    clips.append(outro)
 
     logging.info(f'[END  ] Add intro and outro')
 
@@ -105,8 +99,8 @@ def run(clean, input_list):
     durations = list()
     total_duration = 0
 
-    for clip in all_clips:
-        duration = get_video_duration(clip)
+    for clip in clips:
+        duration = utils.get_video_duration(clip)
         durations.append(duration)
         total_duration += duration
 
@@ -122,18 +116,18 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Combine clips')
 
-    id = f'clip.final.{config.ACTIVE_DATE_STR}.mp4'
-    file_path = os.path.join(config.COMBINECLIPS_FOLDER, id)
+    clip_id = f'clip.final.{config.ACTIVE_DATE_STR}.mp4'
+    file_path = os.path.join(config.COMBINECLIPS_FOLDER, clip_id)
 
     bitrate = config.VIDEO_BITRATE
     fps = config.VIDEO_FPS
     codec = config.VIDEO_CODEC
     preset = config.VIDEO_CODEC_PRESET
-    acodec = config.VIDEO_AUDIO_CODEC
+    acodec = config.AUDIO_CODEC
 
     finput = ''
     fconcat = ''
-    for idx, clip in enumerate(all_clips):
+    for idx, clip in enumerate(clips):
         finput += f' -i {clip}'
         fconcat += f'[{idx}:0]'
     finput += f' -stream_loop -1 -i {audio} -shortest '
@@ -142,14 +136,54 @@ def run(clean, input_list):
     afade_duration = config.COMBINECLIPS_AUDIO_FADE_DURATION
 
     ret = os.system(f'ffmpeg {finput} '
-                    f' -filter_complex "{fconcat}concat=n={len(all_clips)}:v=1:a=0[outv]"'
+                    f' -filter_complex "{fconcat}concat=n={len(clips)}:v=1:a=0[outv]"'
                     f' -af "afade=out:st={afade_start}:d={afade_duration}"'
-                    f' -map [outv] -map {len(all_clips)}a  -acodec {acodec} -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {file_path}')
+                    f' -map [outv] -map {len(clips)}a  -acodec {acodec} -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {file_path}')
     if os.WEXITSTATUS(ret) != 0:
         logging.error('Error concatenating media clips')
 
     logging.info(f'[END  ] Combine clips')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Create and save upload data')
+
+    upload_data = {'id': f'upload.{config.ACTIVE_DATE_STR}.yaml',
+                   'clip': os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, clip_id),
+                   'chapters': list()}
+
+    cumulative_duration = 0
+
+    for idx, clip in enumerate(clips):
+
+        chapter_data = dict()
+
+        chapter_data['ts'] = cumulative_duration
+        cumulative_duration += durations[idx]
+
+        if idx == 0:
+            chapter_data['title'] = 'Introduction'
+        elif idx == len(clips) - 1:
+            break
+        else:
+            chapter_data['title'] = digests[idx-1].title
+
+        chapter = Chapter(**chapter_data)
+
+        upload_data['chapters'].append(chapter)
+
+    upload = Upload(**upload_data)
+
+    file_path = f'{config.COMBINECLIPS_FOLDER}/{upload.id}'
+    with open(file_path, 'w') as file:
+        yaml.dump(upload.model_dump(), file, sort_keys=False)
+
+    outputs = [f'{config.COMBINECLIPS_RELATIVE_FOLDER}/{upload.id}']
+
+    logging.info(f'Saved: {file_path}')
+
+    logging.info(f'[END  ] Create and save upload data')
+
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'j_combine_clips/combine_clips ended')
 
-    return [[os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, id)]]
+    return [outputs]

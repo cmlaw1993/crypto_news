@@ -18,5 +18,5 @@ class Status(BaseModel):
     create_thumbnail: StatusData
     generate_clip: StatusData
     combine_clips: StatusData
-    upload_video: StatusData
+    upload_clip: StatusData
     upload_thumbnail: StatusData

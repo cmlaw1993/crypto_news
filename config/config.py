@@ -14,8 +14,8 @@ from keys import keys
 
 ALERT_ENABLE = False
 
-ALERT_TELEGRAM_ID = "5980736272"
-ALERT_TELEGRAM_KEY = "5980736272"
+ALERT_TELEGRAM_ID = "6895080174"
+ALERT_TELEGRAM_KEY = "6895080174"
 
 # ####################################################################################################
 # active datetime
@@ -94,7 +94,7 @@ VIDEO_BITRATE = '12000k'
 VIDEO_FPS = 30
 VIDEO_CODEC = 'h264_nvenc'
 VIDEO_CODEC_PRESET = 'fast'
-VIDEO_AUDIO_CODEC = 'libmp3lame'
+AUDIO_CODEC = 'libmp3lame'
 
 # ####################################################################################################
 # youtube data api
@@ -118,7 +118,7 @@ STATUS_DEFAULT_VALUE = {
     'create_thumbnail': {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
     'generate_clip':    {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
     'combine_clips':    {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'upload_video':     {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
+    'upload_clip':      {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
     'upload_thumbnail': {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
 }
 
@@ -223,8 +223,10 @@ SELECTDIGEST_NUM_SECONDARY = 20
 DOWNLOADMEDIA_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'g_download_media')
 DOWNLOADMEDIA_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'g_download_media')
 
-DOWNLOADMEDIA_MODULES = 'dummy'
-# DOWNLOADMEDIA_MODULES = 'semiauto'
+DOWNLOADMEDIA_MODULES = [
+    'dummy',
+    # 'semiauto'
+]
 
 DOWNLOADMEDIA_DUMMY_IMAGE = [
     'staticdata/dummy/dummyImage0.jpg',
@@ -232,7 +234,7 @@ DOWNLOADMEDIA_DUMMY_IMAGE = [
     'staticdata/dummy/dummyImage2.jpg',
     'staticdata/dummy/dummyImage3.jpg',
     'staticdata/dummy/dummyImage4.jpg',
-    'staticdata/dummy/dummyImage5.jpg',
+    'staticdata/dummy/dummyVideo5.jpg',
 ]
 
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_MODEL = 'gpt-4'
@@ -244,8 +246,10 @@ DOWNLOADMEDIA_SEMIAUTO_OPENAI_TEMPERATURE = 0
 CREATETHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'h_create_thumbnail')
 CREATETHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'h_create_thumbnail')
 
-CREATETHUMBNAIL_MODULES = 'dummy'
-# CREATETHUMBNAIL_MODULES = 'semiauto'
+CREATETHUMBNAIL_MODULES = [
+    'dummy',
+    # 'semiauto'
+]
 
 CREATETHUMBNAIL_DUMMY_IMAGE = os.path.join('staticdata', 'dummy', 'dummyThumbnail.jpg')
 
@@ -312,14 +316,14 @@ COMBINECLIPS_AUDIO = os.path.join('staticdata', 'templates', 'SyntheticDeception
 COMBINECLIPS_AUDIO_FADE_DURATION = 5
 
 # ----------------------------------------------------------------------------------------------------
-# i_upload_video/upload_video
+# k_upload_clip/upload_video
 
-UPLOADVIDEO_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_upload_video')
-UPLOADVIDEO_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_upload_video')
+UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'k_upload_clip')
+UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'k_upload_clip')
 
 # ----------------------------------------------------------------------------------------------------
-# j_upload_thumbnail/upload_thumbnail
+# l_upload_thumbnail/upload_thumbnail
 
-UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'j_upload_thumbnail')
-UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'j_upload_thumbnail')
+UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'l_upload_thumbnail')
+UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'l_upload_thumbnail')
 

@@ -160,44 +160,44 @@ def run(input_list):
             init_zoom = 1 + (zoom_speed * frames)
 
             e = media.effects
-            if e == Effects.Random:
-                e = random.choice(list(Effects))
+            if e == Effects.Random.value:
+                e = random.choice(list(Effects)).value
 
-            if e == Effects.ZoomInCenter:
+            if e == Effects.ZoomInCenter.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+0.0004\':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInUp:
+            elif e == Effects.ZoomInUp.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw/2-(iw/zoom/2):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInUpRight:
+            elif e == Effects.ZoomInUpRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInRight:
+            elif e == Effects.ZoomInRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInDownRight:
+            elif e == Effects.ZoomInDownRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInDown:
+            elif e == Effects.ZoomInDown.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw/2-(iw/zoom/2):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInDownLeft:
+            elif e == Effects.ZoomInDownLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInLeft:
+            elif e == Effects.ZoomInLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomInUpLeft:
+            elif e == Effects.ZoomInUpLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutCenter:
+            elif e == Effects.ZoomOutCenter.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutUp:
+            elif e == Effects.ZoomOutUp.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutUpRight:
+            elif e == Effects.ZoomOutUpRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutRight:
+            elif e == Effects.ZoomOutRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutDownRight:
+            elif e == Effects.ZoomOutDownRight.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutDown:
+            elif e == Effects.ZoomOutDown.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutDownLeft:
+            elif e == Effects.ZoomOutDownLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutLeft:
+            elif e == Effects.ZoomOutLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-            elif e == Effects.ZoomOutUpLeft:
+            elif e == Effects.ZoomOutUpLeft.value:
                 effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
 
             ret = os.system(f'ffmpeg -y -i {media_path}'
@@ -285,60 +285,17 @@ def run(input_list):
         for tmp in tmps:
             os.system(f'rm -rf {tmp}')
 
-        # Append to output and log completion
+        # Save digest
 
-        outputs.append(os.path.join(f'{config.GENERATECLIP_RELATIVE_FOLDER}', f'{base_id}.mp4'))
-        logging.info(f'Saved: {base_id}.mp4')
+        outputs.append(os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, digest.id))
 
-        # # Create cover clip
-        #
-        # tmp_text = f'{config.GENERATECLIP_FOLDER}/{digest.id}.full.text.png'
-        #
-        # font = config.GENERATECLIPS_COVER_FONT
-        # fontsize = config.GENERATECLIPS_COVER_FONT_SIZE
-        # color = config.GENERATECLIPS_COVER_COLOR
-        # border_width = config.GENERATECLIPS_COVER_BORDER_WIDTH
-        # border_height = config.GENERATECLIPS_COVER_BORDER_HEIGHT
-        # gravity = 'South'
-        #
-        # image_magick_tmp = f'{config.GENERATECLIP_FOLDER}/{digest.id}.full.image_magick.txt'
-        # with open(image_magick_tmp, 'w') as file:
-        #     file.write(lines[0])
-        #
-        # ret = os.system(f'convert'
-        #                 f' -bordercolor transparent'
-        #                 f' -border {border_width}x{border_height}'
-        #                 f' -background transparent'
-        #                 f' -fill {color}'
-        #                 f' -font {font}'
-        #                 f' -pointsize {fontsize}'
-        #                 f' -size {width - 2 * border_width}x{height - 2 * border_height}'
-        #                 f' -gravity {gravity}'
-        #                 f' caption:@{image_magick_tmp}'
-        #                 f' -type truecolormatte'
-        #                 f' PNG32:{tmp_text}')
-        # if os.WEXITSTATUS(ret) != 0:
-        #     logging.error('Error running image magick')
-        #
-        # os.system(f'rm {image_magick_tmp}')
-        #
-        # dur = text_durations[0]
-        # wait = config.GENERATECLIPS_SLIDE_WAIT_DURATION
-        # slide = config.GENERATECLIPS_SLIDE_DURATION
-        #
-        # final_cover_clip = f'{config.GENERATECLIP_FOLDER}/{digest.id.replace("yaml", "cover.mp4")}'
-        #
-        # ret = os.system(f'ffmpeg -y'
-        #                 f' -loop 1 -t {dur} -i {config.DATA_FOLDER}/{digest.media[0].id}'
-        #                 f' -loop 1 -t {dur} -i {config.GENERATECLIPS_COVER_BACKDROP}'
-        #                 f' -loop 1 -t {dur} -i {tmp_text}'
-        #                 f' -filter_complex "'
-        #                 f'[0:v]scale={width}:{height},fps={fps}[f0];'
-        #                 f'[f0][1]overlay=0:0:enable=\'between(t,0,{dur})\'[f1];'
-        #                 f'[f1][2]overlay=\'if(lte(t,({wait}+{slide})), -W+((t-{wait})/{slide})*W, if(lte(t,({dur}-{wait}-{slide})), 0, ((t-({dur}-{wait}-{slide}))/{slide})*W))\':H-h[f2];"'
-        #                 f' -map [f2] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {final_cover_clip}')
-        # if os.WEXITSTATUS(ret) != 0:
-        #     logging.error('Error creating final cover clip')
+        digest.clip = os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, f'{base_id}.mp4')
+
+        file_path = f'{config.GENERATECLIP_FOLDER}/{digest.id}'
+        with open(file_path, 'w') as file:
+            yaml.dump(digest.model_dump(), file, sort_keys=False)
+
+        logging.info(f'Saved: {file_path}')
 
     logging.info(f'[END  ] Generate primary clips')
 

@@ -38,20 +38,18 @@ def run(clean, input_list):
 
     logging.info(f'------------------------------------------------------------------------------------------')
 
-    output_list = list()
+    for module in config.CREATETHUMBNAIL_MODULES:
 
-    module = config.CREATETHUMBNAIL_MODULES
+        if module == 'dummy':
+            run_thumbnail_dummy(input_list)
 
-    if module == 'dummy':
-        output_list = run_thumbnail_dummy(input_list)
+        elif module == 'semiauto':
+            run_thumbnail_semiauto(input_list)
 
-    elif module == 'semiauto':
-        output_list = run_thumbnail_semiauto(input_list)
-
-    else:
-        logging.error(f'Unknown module: {module}')
+        else:
+            logging.error(f'Unknown module: {module}')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'h_create_thumbnail/create_thumbnail ended')
 
-    return [output_list]
+    return []

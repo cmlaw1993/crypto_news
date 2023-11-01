@@ -81,7 +81,7 @@ if __name__ == '__main__':
     from stack.h_create_thumbnail.create_thumbnail import run as run_create_thumbnail
     from stack.i_generate_clip.generate_clip import run as run_generate_clip
     from stack.j_combine_clips.combine_clips import run as run_combine_clips
-    from stack.k_upload_video.upload_video import run as run_upload_video
+    from stack.k_upload_clip.upload_clip import run as run_upload_clip
     from stack.l_upload_thumbnail.upload_thumbnail import run as run_upload_thumbnail
 
     # Init logging
@@ -139,8 +139,8 @@ if __name__ == '__main__':
         'download_media':    (True, run_download_media,   status.download_media,   ['generate_clip']),
         'create_thumbnail':  (True, run_create_thumbnail, status.create_thumbnail, ['upload_thumbnail']),
         'generate_clip':     (True, run_generate_clip,    status.generate_clip,    ['combine_clips']),
-        'combine_clips':     (True, run_combine_clips,    status.combine_clips,    ['upload_video']),
-        'upload_video':      (False, run_upload_video,     status.upload_video,     ['upload_thumbnail']),
+        'combine_clips':     (True, run_combine_clips,    status.combine_clips,    ['upload_clip']),
+        'upload_clip':       (True, run_upload_clip,      status.upload_clip,     ['upload_thumbnail']),
         'upload_thumbnail':  (False, run_upload_thumbnail, status.upload_thumbnail, []),
     }
 
@@ -155,15 +155,15 @@ if __name__ == '__main__':
         logging.info(f'##########################################################################################')
 
         if debug_enable == False:
-            log_info_alert(f'# Internally disabled.')
+            log_info_alert(f'#### Internally disabled.')
             continue
 
         if st.enable == False:
-            log_info_alert(f'# Config Disabled')
+            log_info_alert(f'#### Config Disabled')
             continue
 
         if day in [5, 6] and st.weekend == False:
-            log_info_alert(f'# Disabled for weekend')
+            log_info_alert(f'#### Disabled for weekend')
             continue
 
         start_time = time.time()
@@ -185,7 +185,7 @@ if __name__ == '__main__':
         for idx, ret_output_list in enumerate(output):
 
             if st.append_output == True:
-                ret_output_list += stack_info[output_keys[idx]][2]['input']
+                ret_output_list += stack_info[output_keys[idx]][2].input
 
             ret_output_list = list(set(ret_output_list))
             ret_output_list = sorted(ret_output_list)
@@ -201,7 +201,7 @@ if __name__ == '__main__':
         end_time = time.time()
         elapsed_min = int((end_time - start_time) / 60)
         elapsed_sec = int((end_time - start_time) % 60)
-        log_info_alert(f'# Stack ended: {name}, {elapsed_min}m {elapsed_sec}s')
+        log_info_alert(f'#### Stack ended: {name}, {elapsed_min}m {elapsed_sec}s')
 
     log_info_alert('crypto_news ended')
 

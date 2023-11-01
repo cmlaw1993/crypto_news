@@ -37,7 +37,7 @@ class Media(BaseModel):
     source: str
     credit: str
     license: str
-    effects: Effects
+    effects: str
 
 
 class Digest(BaseModel):
@@ -52,4 +52,4 @@ class Digest(BaseModel):
     date: str
     time: str
     media: Optional[Dict[int, Media]] = None
-
+    clip: Optional[str] = None

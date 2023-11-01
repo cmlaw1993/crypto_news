@@ -45,26 +45,5 @@ def run(input_list):
     logging.info(f'[END  ] Open digest in kate')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Prompt')
 
-    file_name = f'thumbnail.{config.ACTIVE_DATE_STR}.png'
-    output_list = [os.path.join(config.CREATETHUMBNAIL_RELATIVE_FOLDER, file_name)]
-    file_path = os.path.join(dst, file_name)
-
-    logging.info(f'Please save thumbnail as {file_path}')
-    logging.info(f'Press enter after thumbnail is saved.')
-    input()
-
-    logging.info(f'[END  ] Prompt')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Check if thumbnail exists')
-
-    if not os.path.exists(file_path):
-        logging.error('Thumbnail does not exists')
-
-    logging.info(f'[END  ] Check if thumbnail exists')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-
-    return output_list
+    return

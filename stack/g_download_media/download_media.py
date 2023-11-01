@@ -40,16 +40,16 @@ def run(clean, input_list):
 
     output_list = list()
 
-    module = config.DOWNLOADMEDIA_MODULES
+    for module in config.DOWNLOADMEDIA_MODULES:
 
-    if module == 'dummy':
-        output_list = run_media_dummy(input_list)
+        if module == 'dummy':
+            output_list += run_media_dummy(input_list)
 
-    elif module == 'semiauto':
-        output_list = run_media_semiauto(input_list)
+        elif module == 'semiauto':
+            output_list += run_media_semiauto(input_list)
 
-    else:
-        logging.error(f'Unknown module: {module}')
+        else:
+            logging.error(f'Unknown module: {module}')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'f_download_media/f_download_media ended')

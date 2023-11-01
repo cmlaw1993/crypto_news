@@ -1,4 +1,4 @@
-from datetime import datetime
+import subprocess
 import tiktoken
 import urllib.parse
 from PIL import Image
@@ -62,3 +62,23 @@ def calculate_image_bounds(image_path):
                 max_y = max(max_y, y)
 
     return min_x, max_x, min_y, max_y
+
+
+def get_video_duration(video_path):
+    command = [
+        'ffprobe',
+        '-v', 'error',
+        '-show_entries', 'format=duration',
+        '-of', 'default=noprint_wrappers=1:nokey=1',
+        video_path
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    if result.returncode != 0:
+        return None
+
+    try:
+        duration = float(result.stdout)
+        return int(round(duration))
+    except ValueError:
+        return None

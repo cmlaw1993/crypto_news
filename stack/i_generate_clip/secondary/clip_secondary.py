@@ -1,12 +1,11 @@
 import logging
-import random
 import math
 import yaml
 
 from moviepy.editor import *
 
 from common import utils
-from common.pydantic.digest import Effects, Digest
+from common.pydantic.digest import Digest
 from config import config
 
 def run(input_list):
@@ -32,7 +31,7 @@ def run(input_list):
         if digest_type != 'secondary':
             continue
 
-        file_path = os.path.join(f'{config.DATA_FOLDER}', f'{digest_file}')
+        file_path = os.path.join(config.DATA_FOLDER, digest_file)
         with open(file_path, 'r') as yaml_file:
             yaml_data = yaml.safe_load(yaml_file)
 
@@ -122,10 +121,17 @@ def run(input_list):
         for tmp in tmps:
             os.system(f'rm -rf {tmp}')
 
-        # Append to output and log completion
+        # Save digest
 
-        outputs.append(os.path.join(f'{config.GENERATECLIP_RELATIVE_FOLDER}', f'{base_id}.mp4'))
-        logging.info(f'Saved: {base_id}.mp4')
+        outputs.append(os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, digest.id))
+
+        digest.clip = os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, f'{base_id}.mp4')
+
+        file_path = f'{config.GENERATECLIP_FOLDER}/{digest.id}'
+        with open(file_path, 'w') as file:
+            yaml.dump(digest.model_dump(), file, sort_keys=False)
+
+        logging.info(f'Saved: {file_path}')
 
     logging.info(f'[END  ] Generate secondary clips')
 
