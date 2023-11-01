@@ -137,10 +137,10 @@ if __name__ == '__main__':
         'rank_digest':       (True, run_rank_digest,      status.rank_digest,      ['select_digest']),
         'select_digest':     (True, run_select_digest,    status.select_digest,    ['download_media', 'create_thumbnail']),
         'download_media':    (True, run_download_media,   status.download_media,   ['generate_clip']),
-        'create_thumbnail':  (True, run_create_thumbnail, status.create_thumbnail, ['upload_thumbnail']),
+        'create_thumbnail':  (True, run_create_thumbnail, status.create_thumbnail, []),
         'generate_clip':     (True, run_generate_clip,    status.generate_clip,    ['combine_clips']),
-        'combine_clips':     (True, run_combine_clips,    status.combine_clips,    ['upload_clip']),
-        'upload_clip':       (True, run_upload_clip,      status.upload_clip,     ['upload_thumbnail']),
+        'combine_clips':     (False, run_combine_clips,    status.combine_clips,   ['upload_clip']),
+        'upload_clip':       (False, run_upload_clip,      status.upload_clip,     ['upload_thumbnail']),
         'upload_thumbnail':  (False, run_upload_thumbnail, status.upload_thumbnail, []),
     }
 
