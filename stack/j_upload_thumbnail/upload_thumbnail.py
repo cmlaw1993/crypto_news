@@ -9,7 +9,7 @@ from keys import keys
 
 def run(clean, input_list):
 
-    logging.info(f'j_upload_thumbnails/upload_thumbnails started')
+    logging.info(f'k_upload_thumbnails/upload_thumbnails started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -38,8 +38,8 @@ def run(clean, input_list):
 
     upload = None
 
-    for input in input_list:
-        file_path = f'{config.DATA_FOLDER}/{input}'
+    for input_item in input_list:
+        file_path = f'{config.DATA_FOLDER}/{input_item}'
         with open(file_path, 'r') as yaml_file:
             yaml_data = yaml.safe_load(yaml_file)
         upload = Upload(**yaml_data)
@@ -49,31 +49,33 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Prompt thumbnail from user')
 
-    thumbnail_name = f'thumbnail.{config.ACTIVE_DATE_STR}.png'
-    thumbnail_path = os.path.join(config.UPLOADTHUMBNAIL_FOLDER, thumbnail_name)
+    if config.UPLOADTHUMBNAIL_USE_DUMMY:
 
-    logging.info(f'Please save thumbnail as {thumbnail_path} and press enter:')
-    input()
+        upload.thumbnail = config.UPLOADTHUMBNAIL_DUMMY_IMAGE
+
+    else:
+        thumbnail_name = f'thumbnail.{config.ACTIVE_DATE_STR}.png'
+        thumbnail_path = os.path.join(config.UPLOADTHUMBNAIL_FOLDER, thumbnail_name)
+
+        logging.info(f'Please create and save thumbnail as {thumbnail_path} and press enter.')
+        input()
+
+        if not os.path.exists(thumbnail_path):
+            logging.error('Thumbnail does not exists')
+
+        upload.thumbnail = os.path.join(config.UPLOADTHUMBNAIL_RELATIVE_FOLDER, thumbnail_name)
 
     logging.info(f'[END  ] Prompt thumbnail from user')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Check if thumbnail exists')
-
-    if not os.path.exists(thumbnail_path):
-        logging.error('Thumbnail does not exists')
-
-    upload.thumbnail = thumbnail_path
-
-    logging.info(f'[END  ] Check if thumbnail exists')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Upload thumbnail')
+
+    thumbnail_path = os.path.join(config.DATA_FOLDER, upload.thumbnail)
 
     youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET,
                                         config.YOUTUBEDATAAPI_OAUTH)
 
-    upload_thumbnail(youtube, upload.thumbnail, upload.youtube_id)
+    upload_thumbnail(youtube, thumbnail_path, upload.youtube_id)
 
     logging.info(f'[END  ] Upload thumbnail')
 
@@ -87,6 +89,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save upload file')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'j_upload_thumbnails/upload_thumbnails ended')
+    logging.info(f'k_upload_thumbnails/upload_thumbnails ended')
 
     return []

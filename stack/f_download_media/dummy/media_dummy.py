@@ -53,9 +53,10 @@ def run(input_list):
             media['id'] = config.DOWNLOADMEDIA_DUMMY_IMAGE[image_idx]
             media['keyword'] = ''
             media['source'] = ''
+            media['author'] = ''
             media['credit'] = ''
             media['license'] = ''
-            media['effects'] = 'Random'
+            media['effects'] = 'ZoomOutCenter'
             digest.media[idx] = media
 
     output_list = list()

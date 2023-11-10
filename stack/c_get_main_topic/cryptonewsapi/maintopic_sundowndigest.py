@@ -27,10 +27,17 @@ def run(input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load cryptonewsapi sundowndigest article')
 
+    sundowndigest_articles = list()
+
+    for input in input_list:
+        if 'article.cryptonewsapi.sundowndigest.' in input:
+            sundowndigest_articles.append(input)
+
     # Note: Sometimes, there are two sundowndigests uploaded in a single day.
     #       Under such circumstances, use the latest one.
-    input_list = sorted(input_list)
-    file_name = input_list[-1]
+
+    sundowndigest_articles = sorted(sundowndigest_articles)
+    file_name = sundowndigest_articles[-1]
     file_path = f'{config.DATA_FOLDER}/{file_name}'
     with open(file_path, 'r') as yaml_file:
         yaml_data = yaml.safe_load(yaml_file)
@@ -54,9 +61,10 @@ def run(input_list):
     chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt,human_message_prompt])
     prompt = chat_prompt.format_prompt().to_messages()
 
-    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY,
-                      model_name=config.GETMAINTOPICS_SUNDOWNDIGEST_OPENAI_MODEL,
-                      temperature=config.GETMAINTOPICS_SUNDOWNDIGEST_OPENAI_TEMPERATURE)
+    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
+                      model_name=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_MODEL,
+                      temperature=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TEMPERATURE,
+                      request_timeout=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT)
     results = chat(prompt)
     sanitized_content = results.content
 
@@ -80,19 +88,6 @@ def run(input_list):
                       f' Your target audience include top cryptocurrency traders and fund managers who makes important decisions based on your articles.'
     system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
-    # human_template = f'{sanitized_content}\n'\
-    #                  f'\n'\
-    #                  f'\n'\
-    #                  f'\n'\
-    #                  f'\n'\
-    #                  f'\n'\
-    #                  f'The above is a news snippet.'\
-    #                  f' Identify all the key points of this news snippet.'\
-    #                  f' Simply state your answer without forming a sentence.'\
-    #                  f' Separate each key point with a newline.'\
-    #                  f' Return each key point in the sequence they appear.'\
-    #                  f' Group key points with the same main actor together.'
-
     human_template = f'{sanitized_content}\n'\
                      f'\n'\
                      f'\n'\
@@ -100,27 +95,27 @@ def run(input_list):
                      f'\n'\
                      f'\n'\
                      f'The above is a news snippet.'\
-                     f' Identify all the key points of this news snippet and the originating sentence they belong to.'\
+                     f' Summarize all the key points of this news snippet and the originating sentence(s) they belong to.' \
                      f' Simply state your answer without forming a sentence.' \
                      f' Return each key point in the sequence they appear.' \
-                     f' Group key points with the same main actor together.' \
                      f' Format your answer as follows:\n'\
                      f' \n' \
-                     f' Keypoint:<First keypoint><newline>\n' \
-                     f' Sentence:<Originating sentence for first keypoint>\n' \
-                     f' <newline>\n' \
-                     f' Keypoint:<Second keypoint><newline>\n' \
-                     f' Sentence:<Originating sentence for second keypoint>\n'\
-                     f' <newline>\n'
-
+                     f' Keypoint:<First keypoint>\n' \
+                     f' Sentences:<Originating sentence(s) for first keypoint>\n' \
+                     f' \n' \
+                     f' Keypoint:<Second keypoint>\n' \
+                     f' Sentences:<Originating sentence(s) for second keypoint>\n'\
+                     f' \n'
+    # f' Return a single key point with the same main actor together.' \
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
     chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt,human_message_prompt])
     prompt = chat_prompt.format_prompt().to_messages()
 
-    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY,
-                      model_name=config.GETMAINTOPICS_SUNDOWNDIGEST_OPENAI_MODEL,
-                      temperature=config.GETMAINTOPICS_SUNDOWNDIGEST_OPENAI_TEMPERATURE)
+    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
+                      model_name=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_MODEL,
+                      temperature=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TEMPERATURE,
+                      request_timeout=config.GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT)
     results = chat(prompt)
 
     def next_line(idx, lines):
@@ -177,9 +172,9 @@ def run(input_list):
 
     for main_topic in main_topics:
 
-        output_list.append(f'{config.GETMAINTOPICS_RELATIVE_FOLDER}/{main_topic.id}')
+        output_list.append(f'{config.GETMAINTOPIC_RELATIVE_FOLDER}/{main_topic.id}')
 
-        file_path = f'{config.GETMAINTOPICS_FOLDER}/{main_topic.id}'
+        file_path = f'{config.GETMAINTOPIC_FOLDER}/{main_topic.id}'
         with open(file_path, 'w') as file:
             yaml.dump(main_topic.model_dump(), file, sort_keys=False)
 

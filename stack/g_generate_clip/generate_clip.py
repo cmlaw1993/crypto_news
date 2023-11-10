@@ -1,14 +1,14 @@
 import logging
 import os
 
-from stack.i_generate_clip.primary.clip_primary import run as run_clips_primary
-from stack.i_generate_clip.secondary.clip_secondary import run as run_clips_secondary
+from stack.g_generate_clip.primary.clip_primary import run as run_clips_primary
+from stack.g_generate_clip.secondary.clip_secondary import run as run_clips_secondary
 
 from config import config
 
 
 def run(clean, input_list):
-    logging.info(f'i_generate_clip/generate_clip started')
+    logging.info(f'h_generate_clip/generate_clip started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -45,6 +45,6 @@ def run(clean, input_list):
             output_list_all += run_clips_secondary(input_list)
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'i_generate_clip/generate_clip ended')
+    logging.info(f'h_generate_clip/generate_clip ended')
 
-    return [output_list_all]
+    return output_list_all

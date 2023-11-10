@@ -160,13 +160,14 @@ def run(input_list):
                 vid_duration = utils.get_video_duration(media_path)
 
                 if vid_duration < duration:
-                    ret = os.system(f'ffmpeg -i {media_path} -vf "setpts={math.ceil(duration/vid_duration)}*PTS,scale={width}:{height}"  -t {duration} -an '
-                                    f' -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -t {duration} -b:v {bitrate} -bufsize {bitrate} {media_clip_tmp}')
+                    ret = os.system(
+                        f'ffmpeg -i {media_path} -filter_complex "[0:v]setpts={math.ceil(duration / vid_duration)}*PTS,scale={width}:{height},setsar=sar=1/1[v0]" -an '
+                        f' -map [v0] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -t {duration} -b:v {bitrate} -bufsize {bitrate} {media_clip_tmp}')
                     if os.WEXITSTATUS(ret) != 0:
                         logging.error('Error creating media clips from video')
                 else:
-                    ret = os.system(f'ffmpeg -i {media_path} -vf "scale={width}:{height}" -t {duration} -an'
-                                    f' -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -t {duration} -b:v {bitrate} -bufsize {bitrate} {media_clip_tmp}')
+                    ret = os.system(f'ffmpeg -y -i {media_path} -filter_complex "[0:v]scale={width}:{height},setsar=sar=1/1[v0]" -an'
+                                    f' -map [v0] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -t {duration} -b:v {bitrate} -bufsize {bitrate} {media_clip_tmp}')
                     if os.WEXITSTATUS(ret) != 0:
                         logging.error('Error creating media clips from video')
 
@@ -176,46 +177,45 @@ def run(input_list):
                 zoom_speed = 0.0004
                 init_zoom = 1 + (zoom_speed * frames)
 
-                e = media.effects
-                if e == Effects.Random.value:
-                    e = random.choice(list(Effects)).value
-
-                if e == Effects.ZoomInCenter.value:
+                effects = None
+                if media.effects == Effects.ZoomInCenter.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+0.0004\':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInUp.value:
+                elif media.effects == Effects.ZoomInUp.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw/2-(iw/zoom/2):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInUpRight.value:
+                elif media.effects == Effects.ZoomInUpRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInRight.value:
+                elif media.effects == Effects.ZoomInRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInDownRight.value:
+                elif media.effects == Effects.ZoomInDownRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw-(iw/zoom):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInDown.value:
+                elif media.effects == Effects.ZoomInDown.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=iw/2-(iw/zoom/2):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInDownLeft.value:
+                elif media.effects == Effects.ZoomInDownLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInLeft.value:
+                elif media.effects == Effects.ZoomInLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomInUpLeft.value:
+                elif media.effects == Effects.ZoomInUpLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=10000:-1,zoompan=z=\'zoom+{zoom_speed}\':x=0:y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutCenter.value:
+                elif media.effects == Effects.ZoomOutCenter.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutUp.value:
+                elif media.effects == Effects.ZoomOutUp.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutUpRight.value:
+                elif media.effects == Effects.ZoomOutUpRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutRight.value:
+                elif media.effects == Effects.ZoomOutRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutDownRight.value:
+                elif media.effects == Effects.ZoomOutDownRight.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=0:y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutDown.value:
+                elif media.effects == Effects.ZoomOutDown.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw/2-(iw/zoom/2):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutDownLeft.value:
+                elif media.effects == Effects.ZoomOutDownLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=0:d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutLeft.value:
+                elif media.effects == Effects.ZoomOutLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=ih/2-(ih/zoom/2):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
-                elif e == Effects.ZoomOutUpLeft.value:
+                elif media.effects == Effects.ZoomOutUpLeft.value:
                     effects = f'-filter_complex "[0]setsar=1:1,scale=12000:-1,zoompan=z=\'if(lte(zoom,1),{init_zoom},max(1,zoom-{zoom_speed}))\':x=iw-(iw/zoom):y=ih-(ih/zoom):d={frames}:s={width}x{height}:fps={fps},fps={fps}[out]"'
+                else:
+                    logging.error(f'Invalid effects: {media.id} : {media.effects}')
 
                 ret = os.system(f'ffmpeg -y -i {media_path}'
                                 f' {effects}'
@@ -236,7 +236,10 @@ def run(input_list):
             finput += f' -i {media_clip}'
             fconcat += f'[{idx}:0]'
 
-        ret = os.system(f'ffmpeg {finput} -c copy'
+        logging.info(f'ffmpeg {finput} -c copy'
+                        f' -filter_complex "{fconcat}concat=n={len(media_clips)}:v=1:a=0[out]"'
+                        f' -map [out] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {media_clip_concat_tmp}')
+        ret = os.system(f'ffmpeg {finput}'
                         f' -filter_complex "{fconcat}concat=n={len(media_clips)}:v=1:a=0[out]"'
                         f' -map [out] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {media_clip_concat_tmp}')
         if os.WEXITSTATUS(ret) != 0:

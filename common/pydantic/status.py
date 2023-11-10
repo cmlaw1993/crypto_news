@@ -10,12 +10,10 @@ class StatusData(BaseModel):
 class Status(BaseModel):
     download_news: StatusData
     news_to_vectordb: StatusData
-    get_main_topics: StatusData
+    get_main_topic: StatusData
     construct_digest: StatusData
-    rank_digest: StatusData
-    select_digest: StatusData
+    curate_digest: StatusData
     download_media: StatusData
-    create_thumbnail: StatusData
     generate_clip: StatusData
     combine_clips: StatusData
     upload_clip: StatusData

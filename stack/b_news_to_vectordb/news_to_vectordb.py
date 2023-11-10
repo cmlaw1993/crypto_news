@@ -8,9 +8,6 @@ from common import utils
 from common.pydantic.article import Article
 from config import config
 
-import time
-
-
 def run(clean, input_list):
 
     logging.info(f'b_news_to_vectordb/news_to_vectordb started')
@@ -200,7 +197,7 @@ def run(clean, input_list):
     num_deleted = 0
 
     while True:
-        documents = vector_db.similarity_search(query='', k=100, filter={'active_date': config.ACTIVE_DATE_STR})
+        documents = vector_db.similarity_search(query='', k=4, filter={'active_date': config.ACTIVE_DATE_STR})
         if len(documents) == 0:
             break
 
@@ -248,4 +245,4 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'b_news_to_vectordb/news_to_vectordb ended')
 
-    return []
+    return input_list

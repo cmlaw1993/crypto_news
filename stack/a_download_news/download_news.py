@@ -45,37 +45,35 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Calculate start and end datetime')
 
-    start_dt = config.ACTIVE_DATETIME - timedelta(days=1)
-    end_dt = config.ACTIVE_DATETIME
+    start_dt = config.UTC_DATETIME - timedelta(days=1)
+    end_dt = config.UTC_DATETIME
 
-    logging.info(f'active_datetime: {utils.to_datetime_str(config.ACTIVE_DATETIME)}')
-    logging.info(f'start_datetime : {utils.to_datetime_str(start_dt)}')
-    logging.info(f'end_datetime   : {utils.to_datetime_str(end_dt)}')
+    logging.info(f'utc_active_datetime: {utils.to_datetime_str(config.UTC_DATETIME)}')
+    logging.info(f'utc_start_datetime : {utils.to_datetime_str(start_dt)}')
+    logging.info(f'utc_end_datetime   : {utils.to_datetime_str(end_dt)}')
 
     logging.info(f'[END  ] Calculate start_datetime and end_datetime')
 
     logging.info(f'------------------------------------------------------------------------------------------')
 
-    output_list_all = list()
-    output_list_sundowndigest = list()
+    output_list = list()
 
     for module in config.DOWNLOADNEWS_MODULES:
 
         if module == 'cryptonewsapi_alltickernews':
-            output_list_all += run_dlnews_cryptonewsapi_alltickernews(start_dt, end_dt)
+            output_list += run_dlnews_cryptonewsapi_alltickernews(start_dt, end_dt)
 
         elif module == 'cryptonewsapi_generalcryptonews':
-            output_list_all += run_dlnews_cryptonewsapi_generalcryptonews(start_dt, end_dt)
+            output_list += run_dlnews_cryptonewsapi_generalcryptonews(start_dt, end_dt)
 
         elif module == 'cryptonewsapi_sundowndigest':
-            output_list_sundowndigest += run_dlnews_cryptonewsapi_sundowndigest(start_dt, end_dt)
-            output_list_all += output_list_sundowndigest
+            output_list += run_dlnews_cryptonewsapi_sundowndigest(start_dt, end_dt)
 
         elif module == 'cryptonewsapi_trendingheadlines':
-            output_list_all += run_dlnews_cryptonewsapi_trendingheadlines(start_dt, end_dt)
+            output_list += run_dlnews_cryptonewsapi_trendingheadlines(start_dt, end_dt)
 
         elif module == 'newsdata_all':
-            output_list_all += run_dlnews_newsdata_all(start_dt, end_dt)
+            output_list += run_dlnews_newsdata_all(start_dt, end_dt)
 
         else:
             logging.error(f'Unknown module: {module}')
@@ -83,4 +81,4 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'a_download_news/download_news ended')
 
-    return [output_list_all, output_list_sundowndigest]
+    return output_list

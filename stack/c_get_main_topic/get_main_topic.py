@@ -1,7 +1,7 @@
 import logging
 import os
 
-from stack.c_get_main_topics.cryptonewsapi.maintopic_sundowndigest import run as run_maintp_cryptonewsapi_sundowndigest
+from stack.c_get_main_topic.cryptonewsapi.maintopic_sundowndigest import run as run_maintp_cryptonewsapi_sundowndigest
 
 from config import config
 
@@ -13,12 +13,12 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
 
-    if not os.path.exists(config.GETMAINTOPICS_FOLDER):
+    if not os.path.exists(config.GETMAINTOPIC_FOLDER):
         try:
-            os.makedirs(config.GETMAINTOPICS_FOLDER)
-            logging.info(f'Created folder: {config.GETMAINTOPICS_FOLDER}')
+            os.makedirs(config.GETMAINTOPIC_FOLDER)
+            logging.info(f'Created folder: {config.GETMAINTOPIC_FOLDER}')
         except:
-            logging.error(f'Unable to create folder: {config.GETMAINTOPICS_FOLDER}')
+            logging.error(f'Unable to create folder: {config.GETMAINTOPIC_FOLDER}')
     else:
         logging.info('Folder exists')
 
@@ -28,8 +28,8 @@ def run(clean, input_list):
     logging.info(f'[BEGIN] Clean')
 
     if clean == True:
-        os.system(f'rm -rf {config.GETMAINTOPICS_FOLDER}/*')
-        logging.info(f'Cleaned: {config.GETMAINTOPICS_FOLDER}')
+        os.system(f'rm -rf {config.GETMAINTOPIC_FOLDER}/*')
+        logging.info(f'Cleaned: {config.GETMAINTOPIC_FOLDER}')
     else:
         logging.info("Clean skipped")
 
@@ -39,7 +39,7 @@ def run(clean, input_list):
 
     output_list = list()
 
-    for module in config.GETMAINTOPICS_MODULES:
+    for module in config.GETMAINTOPIC_MODULES:
 
         if module == 'cryptonewsapi_sundowndigest':
             output_list += run_maintp_cryptonewsapi_sundowndigest(input_list)
@@ -50,4 +50,4 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'c_get_main_topics/get_main_topics ended')
 
-    return [output_list]
+    return output_list

@@ -2,7 +2,6 @@ from datetime import timedelta
 import logging
 import nltk
 import yaml
-import time
 import os
 
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
@@ -70,13 +69,22 @@ def run(clean, input_list):
 
     vector_db = config.VECTORDB_GET_INST()
 
-    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY,
-                      model_name=config.CONSTRUCTDIGEST_OPENAI_MODEL,
-                      temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE)
+    chats = [
+        ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
+                   model_name=config.CONSTRUCTDIGEST_OPENAI_MODEL,
+                   temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE,
+                   request_timeout=config.CONSTRUCTDIGEST_OPENAI_TIMEOUT),
+        ChatOpenAI(openai_api_key=keys.OPENAI_KEY_1,
+                   model_name=config.CONSTRUCTDIGEST_OPENAI_MODEL,
+                   temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE,
+                   request_timeout=config.CONSTRUCTDIGEST_OPENAI_TIMEOUT)
+    ]
 
-    for main_topic in main_topics:
+    for idx, main_topic in enumerate(main_topics):
 
         logging.info(f'Constructing digest: {main_topic.id}')
+
+        chat = chats[idx % len(chats)]
 
         # Get news contents
 
@@ -134,6 +142,7 @@ def run(clean, input_list):
                          'Each sentence must be within {min_num_words} to {max_num_words} words.\n' \
                          'Each sentence must be void of speculation and opinions.\n' \
                          'Each sentence must be factual and provide useful information to your target audience.\n' \
+                         'Prefer information corroborated from multiple lines of information.\n' \
                          'Prefer facts and figures in each of your sentences.\n' \
                          'Do not lift sentences. Paraphrase to avoid plagiarism.\n' \
                          'Ensure a logical continuity between sentences.\n' \
@@ -218,8 +227,8 @@ def run(clean, input_list):
             'main_topic': main_topic.content,
             'main_topic_source_content': main_topic.source_content,
             'title': title,
-            'content': sent_tokenize(article_content),
             'oneliner': oneliner,
+            'content': sent_tokenize(article_content),
             'sources': sources,
             'datetime': config.ACTIVE_DATETIME_STR,
             'date': config.ACTIVE_DATE_STR,
@@ -228,8 +237,6 @@ def run(clean, input_list):
 
         digest = Digest(**digest_data)
         digests.append(digest)
-
-        time.sleep(10)
 
     output_list = list()
 
@@ -248,4 +255,4 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'd_construct_digest/construct_digest ended')
 
-    return [output_list]
+    return output_list

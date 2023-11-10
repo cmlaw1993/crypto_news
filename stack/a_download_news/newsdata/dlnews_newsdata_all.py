@@ -97,11 +97,11 @@ def run(start_dt, end_dt):
         if page == 'None':
             break
 
-    output_list = list()
+    output_list = set()
 
     for article in articles:
 
-        output_list.append(f'{config.DOWNLOADNEWS_RELATIVE_FOLDER}/{article.id}')
+        output_list.add(f'{config.DOWNLOADNEWS_RELATIVE_FOLDER}/{article.id}')
 
         file_path = f'{config.DOWNLOADNEWS_FOLDER}/{article.id}'
         with open(file_path, 'w') as file:
@@ -111,4 +111,4 @@ def run(start_dt, end_dt):
 
     logging.info(f'[END  ] Download news for newsdata_all')
 
-    return output_list
+    return list(output_list)

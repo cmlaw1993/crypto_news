@@ -6,10 +6,8 @@ from enum import Enum
 
 
 class Effects(str, Enum):
-    Random = 'Random'
 
     ZoomInCenter = 'ZoomInCenter'
-
     ZoomInUp = 'ZoomInUp'
     ZoomInUpRight = 'ZoomInUpRight'
     ZoomInRight = 'ZoomInRight'
@@ -20,7 +18,6 @@ class Effects(str, Enum):
     ZoomInUpLeft = 'ZoomInUpLeft'
 
     ZoomOutCenter = 'ZoomOutCenter'
-
     ZoomOutUp = 'ZoomOutUp'
     ZoomOutUpRight = 'ZoomOutUpRight'
     ZoomOutRight = 'ZoomOutRight'
@@ -35,6 +32,7 @@ class Media(BaseModel):
     id: str
     keyword: str
     source: str
+    author: str
     credit: str
     license: str
     effects: str
@@ -45,11 +43,12 @@ class Digest(BaseModel):
     main_topic: str
     main_topic_source_content: str
     title: str
-    content: List[str]
     oneliner: str
+    content: List[str]
+    media: Optional[Dict[int, Media]] = None
+    clip: Optional[str] = None
     sources: List[str]
     datetime: str
     date: str
     time: str
-    media: Optional[Dict[int, Media]] = None
-    clip: Optional[str] = None
+
