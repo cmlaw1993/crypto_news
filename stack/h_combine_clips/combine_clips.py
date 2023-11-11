@@ -6,13 +6,13 @@ from moviepy.editor import *
 
 from common import utils
 from common.pydantic.digest import Digest
-from common.pydantic.upload import Upload, Chapter
+from common.pydantic.vidinfo import VidInfo, Chapter
 from config import config
 
 
 def run(clean, input_list):
 
-    logging.info(f'i_combine_clips/combine_clips started')
+    logging.info(f'h_combine_clips/combine_clips started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -145,45 +145,61 @@ def run(clean, input_list):
     logging.info(f'[END  ] Combine clips')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Create and save upload data')
+    logging.info(f'[BEGIN] Create and save vidinfo data')
 
-    upload_data = {'id': f'upload.{config.ACTIVE_DATE_STR}.yaml',
-                   'clip': os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, clip_id),
-                   'chapters': list()}
+    vidinfo_data = {'id': f'vidinfo.{config.ACTIVE_DATE_STR}.yaml',
+                    'clip': os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, clip_id),
+                    'chapters': list()}
 
-    cumulative_duration = 0
+    cum_duration = 0
 
     for idx, clip in enumerate(clips):
 
         chapter_data = dict()
 
-        chapter_data['ts'] = cumulative_duration
-        cumulative_duration += durations[idx]
+        chapter_data['ts'] = cum_duration
+        cum_duration += durations[idx]
 
         if idx == 0:
             chapter_data['title'] = 'Introduction'
+            chapter_data['digest'] = ''
         elif idx == len(clips) - 1:
+            # Outro
             break
         else:
             chapter_data['title'] = digests[idx-1].title
+            chapter_data['digest'] = os.path.join(config.COMBINECLIPS_RELATIVE_FOLDER, digests[idx - 1].id)
 
         chapter = Chapter(**chapter_data)
 
-        upload_data['chapters'].append(chapter)
+        vidinfo_data['chapters'].append(chapter)
 
-    upload = Upload(**upload_data)
+    vidinfo = VidInfo(**vidinfo_data)
 
-    file_path = f'{config.COMBINECLIPS_FOLDER}/{upload.id}'
+    file_path = f'{config.COMBINECLIPS_FOLDER}/{vidinfo.id}'
     with open(file_path, 'w') as file:
-        yaml.dump(upload.model_dump(), file, sort_keys=False)
+        yaml.dump(vidinfo.model_dump(), file, sort_keys=False)
 
-    outputs = [f'{config.COMBINECLIPS_RELATIVE_FOLDER}/{upload.id}']
+    outputs = [f'{config.COMBINECLIPS_RELATIVE_FOLDER}/{vidinfo.id}']
 
     logging.info(f'Saved: {file_path}')
 
-    logging.info(f'[END  ] Create and save upload data')
+    logging.info(f'[END  ] Create and save vidinfo data')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'i_combine_clips/combine_clips ended')
+    logging.info(f'[BEGIN] Save digest')
+
+    for digest in digests:
+
+        file_path = f'{config.COMBINECLIPS_FOLDER}/{digest.id}'
+        with open(file_path, 'w') as file:
+            yaml.dump(digest.model_dump(), file, sort_keys=False)
+
+    logging.info(f'Saved: {file_path}')
+
+    logging.info(f'[END  ] Save digest')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'h_combine_clips/combine_clips ended')
 
     return outputs

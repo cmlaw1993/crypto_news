@@ -2,7 +2,7 @@ import logging
 import yaml
 import os
 
-from common.pydantic.upload import Upload
+from common.pydantic.vidinfo import VidInfo
 from common.googleapi.youtubedataapi import get_authenticated_service, upload_thumbnail
 from config import config
 from keys import keys
@@ -36,13 +36,13 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load upload file')
 
-    upload = None
+    vidinfo = None
 
     for input_item in input_list:
         file_path = f'{config.DATA_FOLDER}/{input_item}'
         with open(file_path, 'r') as yaml_file:
             yaml_data = yaml.safe_load(yaml_file)
-        upload = Upload(**yaml_data)
+        vidinfo = VidInfo(**yaml_data)
 
     logging.info(f'[END  ] Load upload file')
 
@@ -51,7 +51,7 @@ def run(clean, input_list):
 
     if config.UPLOADTHUMBNAIL_USE_DUMMY:
 
-        upload.thumbnail = config.UPLOADTHUMBNAIL_DUMMY_IMAGE
+        vidinfo.thumbnail = config.UPLOADTHUMBNAIL_DUMMY_IMAGE
 
     else:
         thumbnail_name = f'thumbnail.{config.ACTIVE_DATE_STR}.png'
@@ -63,28 +63,28 @@ def run(clean, input_list):
         if not os.path.exists(thumbnail_path):
             logging.error('Thumbnail does not exists')
 
-        upload.thumbnail = os.path.join(config.UPLOADTHUMBNAIL_RELATIVE_FOLDER, thumbnail_name)
+        vidinfo.thumbnail = os.path.join(config.UPLOADTHUMBNAIL_RELATIVE_FOLDER, thumbnail_name)
 
     logging.info(f'[END  ] Prompt thumbnail from user')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Upload thumbnail')
 
-    thumbnail_path = os.path.join(config.DATA_FOLDER, upload.thumbnail)
+    thumbnail_path = os.path.join(config.DATA_FOLDER, vidinfo.thumbnail)
 
     youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET,
                                         config.YOUTUBEDATAAPI_OAUTH)
 
-    upload_thumbnail(youtube, thumbnail_path, upload.youtube_id)
+    upload_thumbnail(youtube, thumbnail_path, vidinfo.youtube_id)
 
     logging.info(f'[END  ] Upload thumbnail')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Save upload file')
 
-    file_path = f'{config.UPLOADCLIP_FOLDER}/{upload.id}'
+    file_path = f'{config.UPLOADCLIP_FOLDER}/{vidinfo.id}'
     with open(file_path, 'w') as file:
-        yaml.dump(upload.model_dump(), file, sort_keys=False)
+        yaml.dump(vidinfo.model_dump(), file, sort_keys=False)
 
     logging.info(f'[END  ] Save upload file')
 

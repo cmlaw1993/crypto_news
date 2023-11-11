@@ -243,8 +243,8 @@ DOWNLOADMEDIA_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'f_download_media')
 DOWNLOADMEDIA_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'f_download_media')
 
 DOWNLOADMEDIA_MODULES = [
-    # 'dummy',
-    'semiauto'
+    'dummy',
+    # 'semiauto'
 ]
 
 DOWNLOADMEDIA_DUMMY_IMAGE = [
@@ -323,16 +323,24 @@ COMBINECLIPS_AUDIO = os.path.join('staticdata', 'templates', 'SyntheticDeception
 COMBINECLIPS_AUDIO_FADE_DURATION = 5
 
 # ----------------------------------------------------------------------------------------------------
-# i_upload_clip/upload_video
+# i_generate_title/generate_title
 
-UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_upload_clip')
-UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_upload_clip')
+GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_generate_title')
+GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_generate_title')
+
+GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 
 # ----------------------------------------------------------------------------------------------------
-# j_upload_thumbnail/upload_thumbnail
+# j_upload_clip/upload_video
 
-UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'j_upload_thumbnail')
-UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'j_upload_thumbnail')
+UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'j_upload_clip')
+UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'j_upload_clip')
+
+# ----------------------------------------------------------------------------------------------------
+# k_upload_thumbnail/upload_thumbnail
+
+UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'k_upload_thumbnail')
+UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'k_upload_thumbnail')
 
 UPLOADTHUMBNAIL_USE_DUMMY = False
 UPLOADTHUMBNAIL_DUMMY_IMAGE = os.path.join('staticdata', 'dummy', 'dummyThumbnail.jpg')

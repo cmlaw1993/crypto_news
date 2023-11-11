@@ -76,8 +76,9 @@ if __name__ == '__main__':
     from stack.f_download_media.download_media import run as run_download_media
     from stack.g_generate_clip.generate_clip import run as run_generate_clip
     from stack.h_combine_clips.combine_clips import run as run_combine_clips
-    from stack.i_upload_clip.upload_clip import run as run_upload_clip
-    from stack.j_upload_thumbnail.upload_thumbnail import run as run_upload_thumbnail
+    from stack.i_generate_title.generate_title import run as run_generate_title
+    from stack.j_upload_clip.upload_clip import run as run_upload_clip
+    from stack.k_upload_thumbnail.upload_thumbnail import run as run_upload_thumbnail
 
     # Init logging
 
@@ -133,6 +134,7 @@ if __name__ == '__main__':
         ('download_media',    True, run_download_media,   status.download_media),
         ('generate_clip',     True, run_generate_clip,    status.generate_clip),
         ('combine_clips',     True, run_combine_clips,    status.combine_clips),
+        ('generate_title',    True, run_generate_title,   status.generate_title),
         ('upload_clip',       True, run_upload_clip,      status.upload_clip),
         ('upload_thumbnail',  True, run_upload_thumbnail, status.upload_thumbnail),
     )
