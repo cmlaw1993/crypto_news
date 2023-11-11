@@ -236,9 +236,6 @@ def run(input_list):
             finput += f' -i {media_clip}'
             fconcat += f'[{idx}:0]'
 
-        logging.info(f'ffmpeg {finput} -c copy'
-                        f' -filter_complex "{fconcat}concat=n={len(media_clips)}:v=1:a=0[out]"'
-                        f' -map [out] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {media_clip_concat_tmp}')
         ret = os.system(f'ffmpeg {finput}'
                         f' -filter_complex "{fconcat}concat=n={len(media_clips)}:v=1:a=0[out]"'
                         f' -map [out] -vcodec {codec} -preset {preset} -pix_fmt yuv420p -color_range tv -r {fps} -b:v {bitrate} -bufsize {bitrate} {media_clip_concat_tmp}')
