@@ -182,5 +182,5 @@ def run(input_list):
         logging.info(f'content: {main_topic.content}')
 
     logging.info(f'[END  ] Get main topics')
-
+    logging.info(f'------------------------------------------------------------------------------------------')
     return output_list

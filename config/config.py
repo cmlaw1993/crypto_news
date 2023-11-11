@@ -161,10 +161,30 @@ GETMAINTOPIC_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'c_get_main_topics')
 GETMAINTOPIC_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'c_get_main_topics')
 
 GETMAINTOPIC_MODULES = [
-    'cryptonewsapi_sundowndigest',
+    'rank',
+    # 'cryptonewsapi_sundowndigest',
 ]
 
-GETMAINTOPIC_SUNDOWNDIGEST_FOLDER = f'{DOWNLOADNEWS_FOLDER}'
+GETMAINTOPIC_RANK_SOURCE_RANK = {
+    'cointelegraph': 10,
+    'coindesk': 9,
+    'beincrypto': 8,
+    'decrypt': 7,
+    'utoday': 6,
+    'bitcoin': 5,
+    'blockworks': 4,
+    'cryptonews': 3,
+    'coincodex': 2,
+    'theblock': 1,
+}
+
+MAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
+MAINTOPIC_RANK_OPENAI_TEMPERATURE = 0
+MAINTOPIC_RANK_OPENAI_TIMEOUT = 30
+
+MAINTOPIC_RANK_MAX_WORDS = 12
+MAINTOPIC_RANK_MAX_TOPICS = 20
+
 GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_MODEL = 'gpt-4-1106-preview'
 GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TEMPERATURE = 0
 GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT = 30
@@ -215,12 +235,6 @@ CURATEDIGEST_SOURCE_RANK = {
 
 CURATEDIGEST_NUM_PRIMARY = 3
 CURATEDIGEST_NUM_SECONDARY = 20
-
-# ----------------------------------------------------------------------------------------------------
-# f_review_digest
-
-# REVIEWDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'e_review_digest')
-# REVIEWDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'e_review_digest')
 
 # ----------------------------------------------------------------------------------------------------
 # f_download_media

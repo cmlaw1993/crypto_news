@@ -1,7 +1,8 @@
 import logging
 import os
 
-from stack.c_get_main_topic.cryptonewsapi.maintopic_sundowndigest import run as run_maintp_cryptonewsapi_sundowndigest
+from stack.c_get_main_topic.rank.maintopic_rank import run as run_maintopic_rank
+from stack.c_get_main_topic.sundowndigest.maintopic_sundowndigest import run as run_maintopic_cryptonewsapi_sundowndigest
 
 from config import config
 
@@ -41,8 +42,11 @@ def run(clean, input_list):
 
     for module in config.GETMAINTOPIC_MODULES:
 
-        if module == 'cryptonewsapi_sundowndigest':
-            output_list += run_maintp_cryptonewsapi_sundowndigest(input_list)
+        if module == 'rank':
+            output_list += run_maintopic_rank(input_list)
+
+        elif module == 'cryptonewsapi_sundowndigest':
+            output_list += run_maintopic_cryptonewsapi_sundowndigest(input_list)
 
         else:
             logging.error(f'Unknown module: {module}')
