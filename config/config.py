@@ -115,14 +115,14 @@ STATUS_FILE = f'{VARDATA_DATE_FOLDER}/status.yaml'
 STATUS_DEFAULT_VALUE = {
     'download_news':    {'enable': True, 'weekend': True,  'append_output': False, 'input': []},
     'news_to_vectordb': {'enable': True, 'weekend': True,  'append_output': False, 'input': []},
-    'get_main_topic':   {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'construct_digest': {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'curate_digest':    {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'download_media':   {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'generate_clip':    {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'combine_clips':    {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'upload_clip':      {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
-    'upload_thumbnail': {'enable': True, 'weekend': False, 'append_output': False, 'input': []},
+    'get_main_topic':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'construct_digest': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'curate_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'download_media':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'generate_clip':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'combine_clips':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'upload_clip':      {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'upload_thumbnail': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
 }
 
 # ----------------------------------------------------------------------------------------------------
