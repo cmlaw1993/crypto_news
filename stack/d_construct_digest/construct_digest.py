@@ -89,47 +89,23 @@ def run(clean, input_list):
         # Get news contents
 
         date_0_days_ago_str = utils.to_date_str(config.ACTIVE_DATETIME)
-        date_1_days_ago_str = utils.to_date_str(config.ACTIVE_DATETIME - timedelta(days=1))
-        date_2_days_ago_str = utils.to_date_str(config.ACTIVE_DATETIME - timedelta(days=2))
-
         docs_0_days_ago = vector_db.similarity_search_with_relevance_scores(query=f'{main_topic.content}', k=config.CONSTRUCTDIGEST_NUMARTICLES_0_DAYS_AGO, filter={'active_date': date_0_days_ago_str})
-        docs_1_days_ago = vector_db.similarity_search_with_relevance_scores(query=f'{main_topic.content}', k=config.CONSTRUCTDIGEST_NUMARTICLES_1_DAYS_AGO, filter={'active_date': date_1_days_ago_str})
-        docs_2_days_ago = vector_db.similarity_search_with_relevance_scores(query=f'{main_topic.content}', k=config.CONSTRUCTDIGEST_NUMARTICLES_2_DAYS_AGO, filter={'active_date': date_2_days_ago_str})
 
-        docs_list = [docs_0_days_ago, docs_1_days_ago, docs_2_days_ago]
-        contents = ['', '', '']
+        contents_0_days_ago = ''
         sources = list()
 
-        for idx, docs in enumerate(docs_list):
-            for doc in docs:
-                contents[idx] += (doc[0].page_content) + "\n\n"
-                sources.append(doc[0].metadata['file'])
-
-        content_0_days_ago = contents[0]
-        content_1_days_ago = contents[1]
-        content_2_days_ago = contents[2]
+        for doc in docs_0_days_ago:
+            contents_0_days_ago += (doc[0].page_content) + "\n\n"
+            sources.append(doc[0].metadata['file'])
 
         system_template = 'You are a top editor for a cryptocurrency news agency. Your target audience include top cryptocurrency traders and fund managers who makes important decisions based on your articles.\n' \
                           '\n' \
-                          'Use the following information from the last three days to answer the question. If you do not know the answer, simply say you do not know.\n' \
+                          'Use the following information from the last day to answer the question. If you do not know the answer, simply say you do not know.\n' \
                           '\n' \
-                          'Information today:\n' \
+                          'Information from the last day:\n' \
                           '\n' \
-                          '{content_0_days_ago}\n' \
+                          '{content_last_day}\n' \
                           '\n' \
-                          '\n' \
-                          '\n' \
-                          '\n' \
-                          'Information yesterday:\n' \
-                          '\n' \
-                          '{content_1_days_ago}\n' \
-                          '\n' \
-                          '\n' \
-                          '\n' \
-                          '\n' \
-                          'Information 2 days ago:\n' \
-                          '\n' \
-                          '{content_2_days_ago}\n' \
                           '\n'
         system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
@@ -152,9 +128,7 @@ def run(clean, input_list):
 
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
         prompt = chat_prompt.format_prompt(
-            content_0_days_ago=content_0_days_ago,
-            content_1_days_ago=content_1_days_ago,
-            content_2_days_ago=content_2_days_ago,
+            content_last_day=contents_0_days_ago,
             topic=main_topic.content,
             min_num_sentences=config.CONSTRUCTDIGEST_CONTENT_MIN_NUM_SENTENCES,
             max_num_sentences=config.CONSTRUCTDIGEST_CONTENT_MAX_NUM_SENTENCES,
