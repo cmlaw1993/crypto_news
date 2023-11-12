@@ -63,6 +63,10 @@ if __name__ == '__main__':
     active_datetime_str = active_date.strftime('%Y%m%d')
     os.environ['ACTIVE_DATE'] = active_datetime_str
 
+    # Set current datetime
+
+    os.environ['CURRENT_DATETIME'] = datetime.now().strftime("%y%m%d_%H%M%S")
+
     # Perform imports
 
     from common import log
@@ -84,17 +88,16 @@ if __name__ == '__main__':
 
     log.init_logging()
 
-    log_info_alert(f'crypto_news started: {config.ACTIVE_DATETIME_STR}')
-
     # Init exception handling
 
     sys.excepthook = global_exception_handler
 
     # Print datetime information
 
-    logging.info(f'user date      :  {config.ACTIVE_DATE_STR}')
-    logging.info(f'active datetime:  {config.ACTIVE_DATETIME_STR}')
-    logging.info(f'active date    :  {config.ACTIVE_DATE_STR}')
+    log_info_alert(f'curr datetime  :  {config.CURR_DATETIME}')
+    log_info_alert(f'user date      :  {config.ACTIVE_DATE_STR}')
+    log_info_alert(f'active datetime:  {config.ACTIVE_DATETIME_STR}')
+    log_info_alert(f'active date    :  {config.ACTIVE_DATE_STR}')
 
     # Create vardata folder
 
@@ -103,6 +106,14 @@ if __name__ == '__main__':
             os.makedirs(config.VARDATA_DATE_FOLDER)
         except:
             logging.error(f'Unable to create folder: {config.VARDATA_DATE_FOLDER}')
+
+    # Create log folder
+
+    if not os.path.exists(config.LOG_FOLDER):
+        try:
+            os.makedirs(config.LOG_FOLDER)
+        except:
+            logging.error(f'Unable to create folder: {config.LOG_FOLDER}')
 
     # Create vectordb folder
 

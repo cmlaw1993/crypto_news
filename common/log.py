@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 import sys
+import os
 
 from common import alert
 from config import config
@@ -28,11 +29,23 @@ def init_logging():
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
 
+    # Create log folder
+    if not os.path.exists(config.LOG_FOLDER):
+        try:
+            os.makedirs(config.LOG_FOLDER)
+        except:
+            raise Exception(f'Unable to create folder: {config.LOG_FOLDER}')
+
+    # Create a FileHandler to write logs to a file
+    file_handler = logging.FileHandler(config.LOG_FILE)
+    file_handler.setFormatter(formatter)
+
     # Create an ExitOnError handler
     exit_on_error_handler = ExitOnError()
 
     # Add the handler to the logger
     logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
     logger.addHandler(exit_on_error_handler)
 
     # Create a function to get the UTC timestamp
@@ -44,4 +57,4 @@ def init_logging():
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Add the UTC and local timestamps to the log record format
-    formatter.formatTime = lambda record, datefmt=None: f'{get_utc_timestamp()} | {get_local_timestamp()}'
+    formatter.formatTime = lambda record, datefmt=None: f'{get_local_timestamp()}'

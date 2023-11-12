@@ -45,6 +45,10 @@ UTC_DATETIME_STR = utils.to_datetime_str(ACTIVE_DATETIME)
 UTC_DATE_STR = utils.to_date_str(ACTIVE_DATETIME)
 UTC_TIME_STR = utils.to_time_str(ACTIVE_DATETIME)
 
+# ####################################################################################################
+# current datetime
+
+CURR_DATETIME = os.getenv('CURRENT_DATETIME')
 
 # ####################################################################################################
 # codepath
@@ -104,6 +108,12 @@ STATUS_DEFAULT_VALUE = {
     'upload_clip':      {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'upload_thumbnail': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
 }
+
+# ####################################################################################################
+# log
+
+LOG_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, '0_log')
+LOG_FILE = os.path.join(LOG_FOLDER, f'log_{CURR_DATETIME}.txt')
 
 # ####################################################################################################
 # vectordb
