@@ -21,7 +21,6 @@ ALERT_TELEGRAM_KEY = "6895080174"
 # active datetime
 
 ACTIVE_DATE = datetime.strptime(os.getenv('ACTIVE_DATE'), '%Y%m%d')
-ACTIVE_DATE_STR = utils.to_datetime_str(ACTIVE_DATE)
 
 ACTIVE_TZ = 'US/Eastern'
 ACTIVE_HOUR = 19
@@ -71,26 +70,6 @@ STATICDATA_FOLDER = os.path.join(DATA_FOLDER, 'staticdata')
 TEMPLATES_FOLDER = os.path.join(STATICDATA_FOLDER, 'templates')
 
 # ####################################################################################################
-# vectordb
-
-VECTORDB_FOLDER = os.path.join(DATA_FOLDER, 'vectordb')
-VECTORDB_COLLECTION_NAME = 'collection'
-VECTORDB_EMBEDDINGS_MODEL = 'text-embedding-ada-002'
-VECTORDB_EMBEDDINGS_COST = 0.0001/1000
-
-def VECTORDB_GET_INST():
-    embeddings = OpenAIEmbeddings(
-        openai_api_key=keys.OPENAI_KEY_0,
-        model=VECTORDB_EMBEDDINGS_MODEL
-    )
-
-    return Chroma(
-        collection_name=VECTORDB_COLLECTION_NAME,
-        persist_directory=VECTORDB_FOLDER,
-        embedding_function=embeddings
-    )
-
-# ####################################################################################################
 # video
 
 VIDEO_WIDTH = 1920
@@ -113,17 +92,39 @@ YOUTUBEDATAAPI_OAUTH = "/home/dennis/Workspace/crypto_news/keys/googleapi/test_o
 STATUS_FILE = f'{VARDATA_DATE_FOLDER}/status.yaml'
 
 STATUS_DEFAULT_VALUE = {
-    'download_news':    {'enable': True, 'weekend': True,  'append_output': False, 'input': []},
-    'news_to_vectordb': {'enable': True, 'weekend': True,  'append_output': False, 'input': []},
+    'download_news':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'news_to_vectordb': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'get_main_topic':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'construct_digest': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'curate_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'download_media':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'generate_clip':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'combine_clips':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'generate_title':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'upload_clip':      {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'upload_thumbnail': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
 }
+
+# ####################################################################################################
+# vectordb
+
+VECTORDB_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, '1_vectordb')
+
+VECTORDB_COLLECTION_NAME = 'collection'
+VECTORDB_EMBEDDINGS_MODEL = 'text-embedding-ada-002'
+VECTORDB_EMBEDDINGS_COST = 0.0001/1000
+
+def VECTORDB_GET_INST():
+    embeddings = OpenAIEmbeddings(
+        openai_api_key=keys.OPENAI_KEY_0,
+        model=VECTORDB_EMBEDDINGS_MODEL
+    )
+
+    return Chroma(
+        collection_name=VECTORDB_COLLECTION_NAME,
+        persist_directory=VECTORDB_FOLDER,
+        embedding_function=embeddings
+    )
 
 # ----------------------------------------------------------------------------------------------------
 # a_download_news
@@ -180,14 +181,14 @@ GETMAINTOPIC_RANK_SOURCE_RANK = {
 
 MAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
 MAINTOPIC_RANK_OPENAI_TEMPERATURE = 0
-MAINTOPIC_RANK_OPENAI_TIMEOUT = 30
+MAINTOPIC_RANK_OPENAI_TIMEOUT = 60
 
 MAINTOPIC_RANK_MAX_WORDS = 12
 MAINTOPIC_RANK_MAX_TOPICS = 20
 
 GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_MODEL = 'gpt-4-1106-preview'
 GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TEMPERATURE = 0
-GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT = 30
+GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT = 60
 
 # ----------------------------------------------------------------------------------------------------
 # d_construct_digest
@@ -197,9 +198,9 @@ CONSTRUCTDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'd_co
 
 CONSTRUCTDIGEST_OPENAI_MODEL = 'gpt-4-1106-preview'
 CONSTRUCTDIGEST_OPENAI_TEMPERATURE = 0
-CONSTRUCTDIGEST_OPENAI_TIMEOUT = 30
+CONSTRUCTDIGEST_OPENAI_TIMEOUT = 60
 
-CONSTRUCTDIGEST_NUMARTICLES_0_DAYS_AGO = 30
+CONSTRUCTDIGEST_NUMARTICLES = 30
 
 CONSTRUCTDIGEST_CONTENT_MIN_NUM_SENTENCES = 3
 CONSTRUCTDIGEST_CONTENT_MAX_NUM_SENTENCES = 4
@@ -232,7 +233,7 @@ CURATEDIGEST_SOURCE_RANK = {
 }
 
 CURATEDIGEST_NUM_PRIMARY = 3
-CURATEDIGEST_NUM_SECONDARY = 20
+CURATEDIGEST_NUM_SECONDARY = 7
 
 # ----------------------------------------------------------------------------------------------------
 # f_download_media
@@ -256,7 +257,7 @@ DOWNLOADMEDIA_DUMMY_IMAGE = [
 
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_MODEL = 'gpt-4-1106-preview'
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_TEMPERATURE = 0
-DOWNLOADMEDIA_SEMIAUTO_OPENAI_TIMEOUT = 30
+DOWNLOADMEDIA_SEMIAUTO_OPENAI_TIMEOUT = 60
 
 # ----------------------------------------------------------------------------------------------------
 # g_generate_clip/generate_clip
@@ -325,6 +326,10 @@ COMBINECLIPS_AUDIO_FADE_DURATION = 5
 
 GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_generate_title')
 GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_generate_title')
+
+GENERATETITLE_OPENAI_MODEL = 'gpt-4-1106-preview'
+GENERATETITLE_OPENAI_TEMPERATURE = 0
+GENERATETITLE_OPENAI_TIMEOUT = 60
 
 GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 

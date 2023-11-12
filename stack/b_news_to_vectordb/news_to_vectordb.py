@@ -185,35 +185,21 @@ def run(clean, input_list):
     logging.info(f'[END  ] Calculate tokens and costs')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Initialize vector_db')
+    logging.info(f'[BEGIN] Delete current datetime vectordb')
+
+    os.system(f'rm -rf {config.VECTORDB_FOLDER}/*')
+
+    logging.info(f'[END  ] Delete current datetime vectordb')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Initialize vectordb')
 
     vector_db = config.VECTORDB_GET_INST()
 
-    logging.info(f'[END  ] Initialize vector_db')
+    logging.info(f'[END  ] Initialize vectordb')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Delete current datetime documents')
-
-    num_deleted = 0
-
-    while True:
-        documents = vector_db.similarity_search(query='', k=4, filter={'active_date': config.ACTIVE_DATE_STR})
-        if len(documents) == 0:
-            break
-
-        ids = list()
-        for document in documents:
-            ids.append(document.metadata['id'])
-        vector_db.delete(ids)
-        vector_db.persist()
-
-        num_deleted += len(documents)
-        logging.info(f'Deleted: {num_deleted}')
-
-    logging.info(f'[END  ] Delete current datetime documents')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Save articles to vector db')
+    logging.info(f'[BEGIN] Save articles to vectordb')
 
     count = 0
     texts = list()
@@ -240,7 +226,7 @@ def run(clean, input_list):
 
             logging.info(f'Saved: {count:>4}/{len(article_data)} {file}')
 
-    logging.info(f'[END  ] Save articles to vector db')
+    logging.info(f'[END  ] Save articles to vectordb')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'b_news_to_vectordb/news_to_vectordb ended')

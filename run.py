@@ -104,6 +104,14 @@ if __name__ == '__main__':
         except:
             logging.error(f'Unable to create folder: {config.VARDATA_DATE_FOLDER}')
 
+    # Create vectordb folder
+
+    if not os.path.exists(config.VECTORDB_FOLDER):
+        try:
+            os.makedirs(config.VECTORDB_FOLDER)
+        except:
+            logging.error(f'Unable to create folder: {config.VECTORDB_FOLDER}')
+
     # Load status file
 
     if os.path.exists(config.STATUS_FILE):

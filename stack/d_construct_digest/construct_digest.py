@@ -88,14 +88,13 @@ def run(clean, input_list):
 
         # Get news contents
 
-        date_0_days_ago_str = utils.to_date_str(config.ACTIVE_DATETIME)
-        docs_0_days_ago = vector_db.similarity_search_with_relevance_scores(query=f'{main_topic.content}', k=config.CONSTRUCTDIGEST_NUMARTICLES_0_DAYS_AGO, filter={'active_date': date_0_days_ago_str})
+        docs = vector_db.similarity_search_with_relevance_scores(query=f'{main_topic.content}', k=config.CONSTRUCTDIGEST_NUMARTICLES)
 
-        contents_0_days_ago = ''
+        info = ''
         sources = list()
 
-        for doc in docs_0_days_ago:
-            contents_0_days_ago += (doc[0].page_content) + "\n\n"
+        for doc in docs:
+            info += (doc[0].page_content) + "\n\n"
             sources.append(doc[0].metadata['file'])
 
         system_template = 'You are a top editor for a cryptocurrency news agency. Your target audience include top cryptocurrency traders and fund managers who makes important decisions based on your articles.\n' \
@@ -104,7 +103,7 @@ def run(clean, input_list):
                           '\n' \
                           'Information from the last day:\n' \
                           '\n' \
-                          '{content_last_day}\n' \
+                          '{information}\n' \
                           '\n' \
                           '\n'
         system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
@@ -128,7 +127,7 @@ def run(clean, input_list):
 
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
         prompt = chat_prompt.format_prompt(
-            content_last_day=contents_0_days_ago,
+            information=info,
             topic=main_topic.content,
             min_num_sentences=config.CONSTRUCTDIGEST_CONTENT_MIN_NUM_SENTENCES,
             max_num_sentences=config.CONSTRUCTDIGEST_CONTENT_MAX_NUM_SENTENCES,

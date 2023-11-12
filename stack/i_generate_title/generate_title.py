@@ -97,9 +97,9 @@ def run(clean, input_list):
     prompt = chat_prompt.format_prompt().to_messages()
 
     chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
-                      model_name=config.MAINTOPIC_RANK_OPENAI_MODEL,
-                      temperature=config.MAINTOPIC_RANK_OPENAI_TEMPERATURE,
-                      request_timeout=config.MAINTOPIC_RANK_OPENAI_TIMEOUT)
+                      model_name=config.GENERATETITLE_OPENAI_MODEL,
+                      temperature=config.GENERATETITLE_OPENAI_TEMPERATURE,
+                      request_timeout=config.GENERATETITLE_OPENAI_TIMEOUT)
     res = chat(prompt)
 
     vid_title = res.content
@@ -158,9 +158,9 @@ def run(clean, input_list):
         prompt = chat_prompt.format_prompt().to_messages()
 
         chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
-                          model_name=config.MAINTOPIC_RANK_OPENAI_MODEL,
-                          temperature=config.MAINTOPIC_RANK_OPENAI_TEMPERATURE,
-                          request_timeout=config.MAINTOPIC_RANK_OPENAI_TIMEOUT)
+                          model_name=config.GENERATETITLE_OPENAI_MODEL,
+                          temperature=config.GENERATETITLE_OPENAI_TEMPERATURE,
+                          request_timeout=config.GENERATETITLE_OPENAI_TIMEOUT)
         res = chat(prompt)
 
         main_actors.append(res.content)
