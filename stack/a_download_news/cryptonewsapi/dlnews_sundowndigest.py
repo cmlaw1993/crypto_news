@@ -76,11 +76,6 @@ def run(start_dt, end_dt):
         if utc_dt < start_dt:
             break
 
-    if len(articles) == 0:
-        tz_time = config.ACTIVE_DATETIME.astimezone(pytz.timezone(config.ACTIVE_TZ))
-        if tz_time.weekday() not in [5, 6]:
-            logging.error('There are 0 articles for current datetime')
-
     output_list = list()
 
     for article in articles:

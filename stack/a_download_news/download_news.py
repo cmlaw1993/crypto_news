@@ -2,10 +2,10 @@ from datetime import timedelta
 import logging
 import os
 
-from stack.a_download_news.cyrptonewsapi.dlnews_alltickernews import run as run_dlnews_cryptonewsapi_alltickernews
-from stack.a_download_news.cyrptonewsapi.dlnews_generalcryptonews import run as run_dlnews_cryptonewsapi_generalcryptonews
-from stack.a_download_news.cyrptonewsapi.dlnews_sundowndigest import run as run_dlnews_cryptonewsapi_sundowndigest
-from stack.a_download_news.cyrptonewsapi.dlnews_trendingheadlines import run as run_dlnews_cryptonewsapi_trendingheadlines
+from stack.a_download_news.cryptonewsapi.dlnews_alltickernews import run as run_dlnews_cryptonewsapi_alltickernews
+from stack.a_download_news.cryptonewsapi.dlnews_generalcryptonews import run as run_dlnews_cryptonewsapi_generalcryptonews
+from stack.a_download_news.cryptonewsapi.dlnews_sundowndigest import run as run_dlnews_cryptonewsapi_sundowndigest
+from stack.a_download_news.cryptonewsapi.dlnews_trendingheadlines import run as run_dlnews_cryptonewsapi_trendingheadlines
 
 from stack.a_download_news.newsdata.dlnews_newsdata_all import run as run_dlnews_newsdata_all
 

@@ -22,13 +22,17 @@ ALERT_TELEGRAM_KEY = "6895080174"
 
 ACTIVE_DATE = datetime.strptime(os.getenv('ACTIVE_DATE'), '%Y%m%d')
 
-ACTIVE_TZ = 'US/Eastern'
-ACTIVE_HOUR = 19
+ACTIVE_TZ = 'Asia/Kuala_Lumpur'
+ACTIVE_HOUR = 6
 
 
 def calculate_active_datetime():
-    tz_time = ACTIVE_DATE.replace(tzinfo=pytz.timezone(ACTIVE_TZ))
+    tz = pytz.timezone(ACTIVE_TZ)
+    tz_time = tz.localize(ACTIVE_DATE)
     ret = tz_time.replace(hour=ACTIVE_HOUR, minute=0, second=0, microsecond=0)
+    current_time = datetime.now(tz)
+    if current_time < ret:
+        raise Exception('Current time is before active datetime')
     return ret
 
 
@@ -139,8 +143,9 @@ def VECTORDB_GET_INST():
 # ----------------------------------------------------------------------------------------------------
 # a_download_news
 
-DOWNLOADNEWS_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, 'a_download_news')
-DOWNLOADNEWS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'a_download_news')
+DOWNLOADNEWS_NAME = 'a_download_news'
+DOWNLOADNEWS_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, DOWNLOADNEWS_NAME)
+DOWNLOADNEWS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, DOWNLOADNEWS_NAME)
 
 DOWNLOADNEWS_MODULES = [
     'cryptonewsapi_alltickernews',
@@ -157,8 +162,9 @@ DOWNLOADNEWS_NEWSDATA_EXCLUDEDOMAIN = 'youtube.com'
 # ----------------------------------------------------------------------------------------------------
 # b_news_to_vectordb
 
-NEWSTOVECTORDB_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, 'b_news_to_vectordb')
-NEWSTOVECTORDB_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'b_news_to_vectordb')
+NEWSTOVECTORDB_NAME = 'b_news_to_vectordb'
+NEWSTOVECTORDB_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, NEWSTOVECTORDB_NAME)
+NEWSTOVECTORDB_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, NEWSTOVECTORDB_NAME)
 
 NEWSTOVECTORDB_MAX_COST = 1
 
@@ -168,8 +174,9 @@ NEWSTOVECTORDB_CHUNK_OVERLAP = 100
 # ----------------------------------------------------------------------------------------------------
 # c_get_main_topic
 
-GETMAINTOPIC_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'c_get_main_topics')
-GETMAINTOPIC_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'c_get_main_topics')
+GETMAINTOPIC_NAME = 'c_get_main_topic'
+GETMAINTOPIC_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GETMAINTOPIC_NAME)
+GETMAINTOPIC_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GETMAINTOPIC_NAME)
 
 GETMAINTOPIC_MODULES = [
     'rank',
@@ -191,7 +198,7 @@ GETMAINTOPIC_RANK_SOURCE_RANK = {
 
 MAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
 MAINTOPIC_RANK_OPENAI_TEMPERATURE = 0
-MAINTOPIC_RANK_OPENAI_TIMEOUT = 60
+MAINTOPIC_RANK_OPENAI_TIMEOUT = 300
 
 MAINTOPIC_RANK_MAX_WORDS = 12
 MAINTOPIC_RANK_MAX_TOPICS = 20
@@ -203,8 +210,9 @@ GETMAINTOPIC_SUNDOWNDIGEST_OPENAI_TIMEOUT = 60
 # ----------------------------------------------------------------------------------------------------
 # d_construct_digest
 
-CONSTRUCTDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'd_construct_digest')
-CONSTRUCTDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'd_construct_digest')
+CONSTRUCTDIGEST_NAME = 'd_construct_digest'
+CONSTRUCTDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, CONSTRUCTDIGEST_NAME)
+CONSTRUCTDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, CONSTRUCTDIGEST_NAME)
 
 CONSTRUCTDIGEST_OPENAI_MODEL = 'gpt-4-1106-preview'
 CONSTRUCTDIGEST_OPENAI_TEMPERATURE = 0
@@ -226,8 +234,15 @@ CONSTRUCTDIGEST_ONELINER_MAX_NUM_WORDS_PER_SENTENCE = 20
 # ----------------------------------------------------------------------------------------------------
 # e_curate_digest
 
-CURATEDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'e_curate_digest')
-CURATEDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'e_curate_digest')
+CURATEDIGEST_NAME = 'e_curate_digest'
+CURATEDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, CURATEDIGEST_NAME)
+CURATEDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, CURATEDIGEST_NAME)
+
+CURATEDIGEST_DAYS_AGO = 3
+
+CURATEDIGEST_OPENAI_MODEL = 'gpt-4-1106-preview'
+CURATEDIGEST_OPENAI_TEMPERATURE = 0
+CURATEDIGEST_OPENAI_TIMEOUT = 60
 
 CURATEDIGEST_SOURCE_RANK = {
     'cointelegraph': 10,
@@ -248,12 +263,13 @@ CURATEDIGEST_NUM_SECONDARY = 7
 # ----------------------------------------------------------------------------------------------------
 # f_download_media
 
-DOWNLOADMEDIA_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'f_download_media')
-DOWNLOADMEDIA_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'f_download_media')
+DOWNLOADMEDIA_NAME = 'f_download_media'
+DOWNLOADMEDIA_FOLDER = os.path.join(VARDATA_DATE_FOLDER, DOWNLOADMEDIA_NAME)
+DOWNLOADMEDIA_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, DOWNLOADMEDIA_NAME)
 
 DOWNLOADMEDIA_MODULES = [
-    'dummy',
-    # 'semiauto'
+    # 'dummy',
+    'semiauto'
 ]
 
 DOWNLOADMEDIA_DUMMY_IMAGE = [
@@ -272,8 +288,9 @@ DOWNLOADMEDIA_SEMIAUTO_OPENAI_TIMEOUT = 60
 # ----------------------------------------------------------------------------------------------------
 # g_generate_clip/generate_clip
 
-GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'g_generate_clip')
-GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'g_generate_clip')
+GENERATECLIP_NAME = 'g_generate_clip'
+GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATECLIP_NAME)
+GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATECLIP_NAME)
 
 GENERATECLIP_MODULES = [
     'primary',
@@ -321,8 +338,9 @@ GENERATECLIP_SECONDARY_TITLE_BACKDROP = os.path.join(f'{TEMPLATES_FOLDER}', 'Tit
 # ----------------------------------------------------------------------------------------------------
 # h_combine_clips/combine_clips
 
-COMBINECLIPS_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'h_combine_clips')
-COMBINECLIPS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'h_combine_clips')
+COMBINECLIPS_NAME = 'h_combine_clips'
+COMBINECLIPS_FOLDER = os.path.join(VARDATA_DATE_FOLDER, COMBINECLIPS_NAME)
+COMBINECLIPS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, COMBINECLIPS_NAME)
 
 COMBINECLIPS_INTRO = os.path.join('staticdata', 'templates', 'TestIntro.mp4')
 COMBINECLIPS_OUTRO = os.path.join('staticdata', 'templates', 'TestOutro.mp4')
@@ -334,8 +352,9 @@ COMBINECLIPS_AUDIO_FADE_DURATION = 5
 # ----------------------------------------------------------------------------------------------------
 # i_generate_title/generate_title
 
-GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'i_generate_title')
-GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'i_generate_title')
+GENERATETITLE_NAME = 'i_generate_title'
+GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATETITLE_NAME)
+GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATETITLE_NAME)
 
 GENERATETITLE_OPENAI_MODEL = 'gpt-4-1106-preview'
 GENERATETITLE_OPENAI_TEMPERATURE = 0
@@ -346,14 +365,16 @@ GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 # ----------------------------------------------------------------------------------------------------
 # j_upload_clip/upload_video
 
-UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'j_upload_clip')
-UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'j_upload_clip')
+UPLOADCLIP_NAME = 'j_upload_clip'
+UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
+UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
 # ----------------------------------------------------------------------------------------------------
 # k_upload_thumbnail/upload_thumbnail
 
-UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, 'k_upload_thumbnail')
-UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, 'k_upload_thumbnail')
+UPLOADTHUMBNAIL_NAME = 'k_upload_thumbnail'
+UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADTHUMBNAIL_NAME)
+UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADTHUMBNAIL_NAME)
 
 UPLOADTHUMBNAIL_USE_DUMMY = False
 UPLOADTHUMBNAIL_DUMMY_IMAGE = os.path.join('staticdata', 'dummy', 'dummyThumbnail.jpg')

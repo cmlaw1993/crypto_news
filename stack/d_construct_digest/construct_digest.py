@@ -115,7 +115,7 @@ def run(clean, input_list):
                          'Please write a news article for the above topic for today.\n' \
                          'The news article must be within {min_num_sentences} to {max_num_sentences} sentences long.\n' \
                          'Each sentence must be within {min_num_words} to {max_num_words} words.\n' \
-                         'Each sentence must be void of speculation and opinions.\n' \
+                         'Each sentence must be void of price speculation and opinions.\n' \
                          'Each sentence must be factual and provide useful information to your target audience.\n' \
                          'Prefer information corroborated from multiple lines of information.\n' \
                          'Prefer facts and figures in each of your sentences.\n' \

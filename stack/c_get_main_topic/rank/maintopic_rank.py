@@ -117,7 +117,7 @@ def run(input_list):
             'id': f'main_topic.rank.{priority:02}.{utils.sanitize_file_name(keypoint)}.yaml',
             'content': keypoint,
             'source': sources,
-            'source_content': '',
+            'source_content': score,
             'datetime': config.ACTIVE_DATETIME_STR,
             'date': config.ACTIVE_TIME_STR,
             'time': config.ACTIVE_TIME_STR
@@ -125,6 +125,11 @@ def run(input_list):
 
         main_topic = Topic(**maintopic_data)
         main_topics.append(main_topic)
+
+    logging.info(f'[END  ] Get main topics')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Save main topics')
 
     output_list = list()
 
@@ -138,6 +143,7 @@ def run(input_list):
         logging.info(f'saved  : {main_topic.id}')
         logging.info(f'content: {main_topic.content}')
 
-    logging.info(f'[END  ] Get main topics')
+    logging.info(f'[BEGIN] Save main topics')
+
     logging.info(f'------------------------------------------------------------------------------------------')
     return output_list
