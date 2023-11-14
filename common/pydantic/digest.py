@@ -51,4 +51,4 @@ class Digest(BaseModel):
     datetime: str
     date: str
     time: str
-
+    reason: Optional[str] = None

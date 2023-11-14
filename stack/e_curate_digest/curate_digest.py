@@ -11,6 +11,22 @@ from common import utils
 from config import config
 from keys import keys
 
+def digest_to_text(article):
+    contents = ''
+    for content in article.content:
+        contents += f'{content}'
+        if contents[-1] != '.':
+            contents += "."
+        contents += ' '
+
+    ret = ''
+    ret += f'Article:\n'
+    ret += f'    Title: {article.title}\n'
+    ret += f'    Content: {contents}\n'
+    ret += f'\n'
+    
+    return ret
+
 
 def run(clean, input_list):
 
@@ -60,45 +76,25 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Curate digest')
 
+    accepted_digests = list()
+    rejected_digests = list()
+    
     verdicts = list()
-
-    curated = list()
 
     for digest in digests:
 
-        system_template = f'You are a top editor for a cryptocurrency news agency.'
+        system_template = f'You are a top editor for a cryptocurrency news agency.' \
+                          f' Your target audience include top cryptocurrency traders and fund managers who trusts in the objectiveness and fairness of your publication.'
         system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
         accepted_str = ''
-        for idx, crt in enumerate(curated):
-
-            contents = ''
-            for content in crt.content:
-                contents += f'{content}'
-                if contents[-1] != '.':
-                    contents += "."
-                contents += ' '
-
-            accepted_str += f'Article {idx+1}'
-            accepted_str += f'    Title: {crt.title}\n'
-            accepted_str += f'    Content: {contents}\n'
-            accepted_str += f'\n'
-
+        for idx, accepted in enumerate(accepted_digests):
+            accepted_str += digest_to_text(accepted)
         if accepted_str == '':
             accepted_str += '    <List is currently empty>'
 
         new_str = ''
-        contents = ''
-        for content in digest.content:
-            contents += f'{content}'
-            if contents[-1] != '.':
-                contents += "."
-            contents += ' '
-
-        new_str += f'New Article:'
-        new_str += f'    Title: {digest.title}\n'
-        new_str += f'    Content: {contents}\n'
-        new_str += f'\n'
+        new_str += digest_to_text(digest)
 
         human_template = f'The following is the list of cryptocurrency news articles that are to be published for the day:\n' \
                          f'\n' \
@@ -138,20 +134,23 @@ def run(clean, input_list):
         reason = answer.split(':')[1]
 
         if yn.strip().lower() == 'yes':
+            digest.reason = reason
+            accepted_digests.append(digest)
             verdicts.append(f'Accepted : {digest.title} : {reason}')
-            curated.append(digest)
         else:
+            digest.reason = reason
+            rejected_digests.append(digest)
             verdicts.append(f'Rejected : {digest.title} : {reason}')
 
     for verdict in verdicts:
         logging.info(verdict)
 
-    digests = curated
+    digests = accepted_digests
 
     logging.info(f'[END  ] Curate digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Compare to recent digests')
+    logging.info(f'[BEGIN] Compare to previous day\'s digests')
 
     prev_digests = list()
 
@@ -166,12 +165,15 @@ def run(clean, input_list):
 
         files = [os.path.join(folder, f) for f in os.listdir(folder)]
         for file_path in files:
+            if 'digest.rejected' in file_path:
+                continue
             with open(file_path, 'r') as yaml_file:
                 yaml_data = yaml.safe_load(yaml_file)
             prev_digest = Digest(**yaml_data)
             prev_digests.append(prev_digest)
 
-    deduplicated = list()
+    accepted_digests = list()
+    repeated_digests = list()
     verdicts = list()
 
     if len(prev_digests) > 0:
@@ -183,31 +185,10 @@ def run(clean, input_list):
 
             prev_str = ''
             for idx, prev in enumerate(prev_digests):
-
-                contents = ''
-                for content in prev.content:
-                    contents += f'{content}'
-                    if contents[-1] != '.':
-                        contents += "."
-                    contents += ' '
-
-                prev_str += f'Article {idx + 1}'
-                prev_str += f'    Title: {prev.title}\n'
-                prev_str += f'    Content: {contents}\n'
-                prev_str += f'\n'
+                prev_str += digest_to_text(prev)
 
             new_str = ''
-            contents = ''
-            for content in digest.content:
-                contents += f'{content}'
-                if contents[-1] != '.':
-                    contents += "."
-                contents += ' '
-
-            new_str += f'New Article:'
-            new_str += f'    Title: {digest.title}\n'
-            new_str += f'    Content: {contents}\n'
-            new_str += f'\n'
+            new_str += digest_to_text(digest)
 
             human_template = f'The following is the list of cryptocurrency news articles that are to be published for the day:\n' \
                              f'\n' \
@@ -247,17 +228,19 @@ def run(clean, input_list):
             reason = answer.split(':')[1]
 
             if yn.strip().lower() == 'yes':
+                accepted_digests.append(digest)
                 verdicts.append(f'Accepted : {digest.title} : {reason}')
-                deduplicated.append(digest)
             else:
+                digest.reason = reason
+                repeated_digests.append(digest)
                 verdicts.append(f'Rejected : {digest.title} : {reason}')
 
-    for verdict in verdicts:
-        logging.info(verdict)
+        for verdict in verdicts:
+            logging.info(verdict)
 
-        digests = deduplicated
+        digests = accepted_digests
 
-    logging.info(f'[END  ] Compare to recent digests')
+    logging.info(f'[END  ] Compare to previous day\'s digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Rank digest')
@@ -320,7 +303,7 @@ def run(clean, input_list):
 
         digest.id = f'digest.{type}.{rank:02}.{score:03}.{name}.yaml'
 
-        if type != "unused":
+        if type == "primary" or type == 'secondary':
             output_list.append(f'{config.CURATEDIGEST_RELATIVE_FOLDER}/{digest.id}')
 
         file_path = f'{config.CURATEDIGEST_FOLDER}/{digest.id}'
@@ -337,6 +320,12 @@ def run(clean, input_list):
 
     for idx, (score, digest) in enumerate(unused_digest_scores):
         save_digest(idx, score, digest, "unused")
+
+    for idx, digest in enumerate(rejected_digests):
+        save_digest(idx, 0, digest, "_rejected")
+
+    for idx, digest in enumerate(repeated_digests):
+        save_digest(idx, 0, digest, "_repeated")
 
     logging.info(f'[END  ] Save digests')
 
