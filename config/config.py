@@ -12,7 +12,7 @@ from keys import keys
 # ####################################################################################################
 # alert
 
-ALERT_ENABLE = False
+ALERT_ENABLE = True
 
 ALERT_TELEGRAM_ID = "6895080174"
 ALERT_TELEGRAM_KEY = "6895080174"
