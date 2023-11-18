@@ -96,10 +96,12 @@ if __name__ == '__main__':
     # Print datetime information
 
     log_info_alert(f'##########################################################################################')
-    log_info_alert(f'curr datetime  :  {config.CURR_DATETIME}')
-    log_info_alert(f'user date      :  {config.ACTIVE_DATE_STR}')
-    log_info_alert(f'active datetime:  {config.ACTIVE_DATETIME_STR}')
-    log_info_alert(f'active date    :  {config.ACTIVE_DATE_STR}')
+    log_info_alert(f'curr datetime   :  {config.CURR_DATETIME}')
+    log_info_alert(f'user date       :  {config.ACTIVE_DATE_STR}')
+    log_info_alert(f'active datetime :  {config.ACTIVE_DATETIME_STR}')
+    log_info_alert(f'active date     :  {config.ACTIVE_DATE_STR}')
+    log_info_alert(f'publish datetime:  {config.PUBLISH_DATETIME_STR}')
+    log_info_alert(f'publish date    :  {config.PUBLISH_DATE_STR}')
 
     # Create vardata folder
 

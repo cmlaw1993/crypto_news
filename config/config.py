@@ -25,6 +25,9 @@ ACTIVE_DATE = datetime.strptime(os.getenv('ACTIVE_DATE'), '%Y%m%d')
 ACTIVE_TZ = 'Asia/Kuala_Lumpur'
 ACTIVE_HOUR = 6
 
+PUBLISH_TZ = 'US/Eastern'
+PUBLISH_HOUR = 20
+
 
 def calculate_active_datetime():
     tz = pytz.timezone(ACTIVE_TZ)
@@ -41,13 +44,31 @@ ACTIVE_DATETIME_STR = utils.to_datetime_str(ACTIVE_DATETIME)
 ACTIVE_DATE_STR = utils.to_date_str(ACTIVE_DATETIME)
 ACTIVE_TIME_STR = utils.to_time_str(ACTIVE_DATETIME)
 
+
 def calculate_utc_datetime():
     return ACTIVE_DATETIME.astimezone(pytz.timezone('UTC'))
+
 
 UTC_DATETIME = calculate_utc_datetime()
 UTC_DATETIME_STR = utils.to_datetime_str(ACTIVE_DATETIME)
 UTC_DATE_STR = utils.to_date_str(ACTIVE_DATETIME)
 UTC_TIME_STR = utils.to_time_str(ACTIVE_DATETIME)
+
+
+def calculate_publish_datetime():
+    tz = pytz.timezone(PUBLISH_TZ)
+    tz_time = ACTIVE_DATETIME.astimezone(tz)
+    ret = tz_time.replace(hour=PUBLISH_HOUR, minute=0, second=0, microsecond=0)
+    if tz_time > ret:
+        ret += timedelta(days=1)
+    return ret
+
+
+PUBLISH_DATETIME = calculate_publish_datetime()
+PUBLISH_DATETIME_STR = utils.to_datetime_str(PUBLISH_DATETIME)
+PUBLISH_DATE_STR = utils.to_date_str(PUBLISH_DATETIME)
+PUBLISH_TIME_STR = utils.to_time_str(PUBLISH_DATETIME)
+
 
 # ####################################################################################################
 # current datetime
