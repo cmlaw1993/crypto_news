@@ -258,7 +258,7 @@ CURATEDIGEST_SOURCE_RANK = {
 }
 
 CURATEDIGEST_NUM_PRIMARY = 3
-CURATEDIGEST_NUM_SECONDARY = 7
+CURATEDIGEST_NUM_SECONDARY = 5
 
 # ----------------------------------------------------------------------------------------------------
 # f_download_media
