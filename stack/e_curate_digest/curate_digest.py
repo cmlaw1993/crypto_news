@@ -30,7 +30,7 @@ def digest_to_text(article):
 
 def run(clean, input_list):
 
-    logging.info(f'e_curate_digest/curate_digest started')
+    logging.info(f'{config.CURATEDIGEST_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -330,6 +330,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'e_curate_digest/curate_digest ended')
+    logging.info(f'{config.CURATEDIGEST_NAME} ended')
 
     return output_list

@@ -10,7 +10,7 @@ from config import config
 
 def run(clean, input_list):
 
-    logging.info(f'f_review_digest/review_digest started')
+    logging.info(f'{config.REVIEWDIGEST_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -76,6 +76,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'f_review_digest/review_digest ended')
+    logging.info(f'{config.REVIEWDIGEST_NAME} ended')
 
     return outputs

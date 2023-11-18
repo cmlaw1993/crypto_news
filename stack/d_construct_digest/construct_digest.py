@@ -16,7 +16,7 @@ from keys import keys
 
 def run(clean, input_list):
 
-    logging.info(f'd_construct_digest/construct_digest started')
+    logging.info(f'{config.CONSTRUCTDIGEST_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -226,6 +226,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Construct digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'd_construct_digest/construct_digest ended')
+    logging.info(f'{config.CONSTRUCTDIGEST_NAME} ended')
 
     return output_list

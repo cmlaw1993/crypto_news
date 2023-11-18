@@ -10,7 +10,7 @@ from config import config
 
 def run(clean, input_list):
 
-    logging.info(f'b_news_to_vectordb/news_to_vectordb started')
+    logging.info(f'{config.NEWSTOVECTORDB_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -229,6 +229,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save articles to vectordb')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'b_news_to_vectordb/news_to_vectordb ended')
+    logging.info(f'{config.NEWSTOVECTORDB_NAME} ended')
 
     return input_list

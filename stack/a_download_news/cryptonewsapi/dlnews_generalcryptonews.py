@@ -13,7 +13,7 @@ from keys import keys
 def run(start_dt, end_dt):
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Download news for cyrptonewsapi_alltickernews')
+    logging.info(f'[BEGIN] Download news for cyrptonewsapi_generalcryptonews')
 
     articles = list()
 
@@ -98,6 +98,6 @@ def run(start_dt, end_dt):
 
         logging.info(f'Downloaded: {article.id}')
 
-    logging.info(f'[END  ] Download news for cyrptonewsapi_alltickernews')
+    logging.info(f'[END  ] Download news for cyrptonewsapi_generalcryptonews')
 
     return output_list

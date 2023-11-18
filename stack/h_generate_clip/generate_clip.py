@@ -8,7 +8,7 @@ from config import config
 
 
 def run(clean, input_list):
-    logging.info(f'h_generate_clip/generate_clip started')
+    logging.info(f'{config.GENERATECLIP_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -45,6 +45,6 @@ def run(clean, input_list):
             output_list_all += run_clips_secondary(input_list)
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'h_generate_clip/generate_clip ended')
+    logging.info(f'{config.GENERATECLIP_NAME} ended')
 
     return output_list_all

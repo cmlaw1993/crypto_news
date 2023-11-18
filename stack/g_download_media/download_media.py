@@ -9,7 +9,7 @@ from config import config
 
 def run(clean, input_list):
 
-    logging.info(f'g_download_media/f_download_media')
+    logging.info(f'{config.DOWNLOADMEDIA_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -41,6 +41,6 @@ def run(clean, input_list):
             logging.error(f'Unknown module: {module}')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'g_download_media/f_download_media ended')
+    logging.info(f'{config.DOWNLOADMEDIA_NAME} ended')
 
     return output_list

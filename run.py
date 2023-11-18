@@ -95,6 +95,7 @@ if __name__ == '__main__':
 
     # Print datetime information
 
+    log_info_alert(f'##########################################################################################')
     log_info_alert(f'curr datetime  :  {config.CURR_DATETIME}')
     log_info_alert(f'user date      :  {config.ACTIVE_DATE_STR}')
     log_info_alert(f'active datetime:  {config.ACTIVE_DATETIME_STR}')
@@ -167,20 +168,20 @@ if __name__ == '__main__':
 
     for idx, (name, debug_enable, func, st) in enumerate(stack_info):
 
-        log_info_alert(f'##########################################################################################')
+        logging.info(f'##########################################################################################')
         log_info_alert(f'# Running stack: {name}')
-        log_info_alert(f'##########################################################################################')
+        logging.info(f'##########################################################################################')
 
         if debug_enable == False:
-            log_info_alert(f'#### Internally disabled.')
+            log_info_alert(f'# Internally disabled.')
             continue
 
         if st.enable == False:
-            log_info_alert(f'#### Config Disabled')
+            log_info_alert(f'# Config Disabled')
             continue
 
         if day in [5, 6] and st.weekend == False:
-            log_info_alert(f'#### Disabled for weekend')
+            log_info_alert(f'# Disabled for weekend')
             continue
 
         start_time = time.time()
@@ -212,7 +213,7 @@ if __name__ == '__main__':
         end_time = time.time()
         elapsed_min = int((end_time - start_time) / 60)
         elapsed_sec = int((end_time - start_time) % 60)
-        log_info_alert(f'#### Stack ended: {name}, {elapsed_min}m {elapsed_sec}s')
+        log_info_alert(f'# Stack ended: {name}, {elapsed_min}m {elapsed_sec}s')
 
     log_info_alert('crypto_news ended')
 

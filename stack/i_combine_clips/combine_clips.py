@@ -12,7 +12,7 @@ from config import config
 
 def run(clean, input_list):
 
-    logging.info(f'i_combine_clips/combine_clips started')
+    logging.info(f'{config.COMBINECLIPS_NAME} started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -200,6 +200,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'i_combine_clips/combine_clips ended')
+    logging.info(f'{config.COMBINECLIPS_NAME} ended')
 
     return outputs
