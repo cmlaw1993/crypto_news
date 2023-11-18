@@ -101,7 +101,11 @@ def run(start_dt, end_dt):
 
     for article in articles:
 
-        output_list.add(f'{config.DOWNLOADNEWS_RELATIVE_FOLDER}/{article.id}')
+        output = f'{config.DOWNLOADNEWS_RELATIVE_FOLDER}/{article.id}'
+        if output in output_list:
+            continue
+
+        output_list.add(output)
 
         file_path = f'{config.DOWNLOADNEWS_FOLDER}/{article.id}'
         with open(file_path, 'w') as file:
