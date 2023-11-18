@@ -105,6 +105,7 @@ STATUS_DEFAULT_VALUE = {
     'get_main_topic':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'construct_digest': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'curate_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'review_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'download_media':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'generate_clip':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'combine_clips':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
@@ -261,9 +262,16 @@ CURATEDIGEST_NUM_PRIMARY = 3
 CURATEDIGEST_NUM_SECONDARY = 5
 
 # ----------------------------------------------------------------------------------------------------
-# f_download_media
+# f_review_digest
 
-DOWNLOADMEDIA_NAME = 'f_download_media'
+REVIEWDIGEST_NAME = 'f_review_digest'
+REVIEWDIGEST_FOLDER = os.path.join(VARDATA_DATE_FOLDER, REVIEWDIGEST_NAME)
+REVIEWDIGEST_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, REVIEWDIGEST_NAME)
+
+# ----------------------------------------------------------------------------------------------------
+# g_download_media
+
+DOWNLOADMEDIA_NAME = 'g_download_media'
 DOWNLOADMEDIA_FOLDER = os.path.join(VARDATA_DATE_FOLDER, DOWNLOADMEDIA_NAME)
 DOWNLOADMEDIA_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, DOWNLOADMEDIA_NAME)
 
@@ -286,9 +294,9 @@ DOWNLOADMEDIA_SEMIAUTO_OPENAI_TEMPERATURE = 0
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_TIMEOUT = 60
 
 # ----------------------------------------------------------------------------------------------------
-# g_generate_clip/generate_clip
+# h_generate_clip/generate_clip
 
-GENERATECLIP_NAME = 'g_generate_clip'
+GENERATECLIP_NAME = 'h_generate_clip'
 GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATECLIP_NAME)
 GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATECLIP_NAME)
 
@@ -336,9 +344,9 @@ GENERATECLIP_SECONDARY_TITLE_BACKGROUND = os.path.join(f'{TEMPLATES_FOLDER}', 'T
 GENERATECLIP_SECONDARY_TITLE_BACKDROP = os.path.join(f'{TEMPLATES_FOLDER}', 'TitleBackdrop.png')
 
 # ----------------------------------------------------------------------------------------------------
-# h_combine_clips/combine_clips
+# i_combine_clips/combine_clips
 
-COMBINECLIPS_NAME = 'h_combine_clips'
+COMBINECLIPS_NAME = 'i_combine_clips'
 COMBINECLIPS_FOLDER = os.path.join(VARDATA_DATE_FOLDER, COMBINECLIPS_NAME)
 COMBINECLIPS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, COMBINECLIPS_NAME)
 
@@ -350,9 +358,9 @@ COMBINECLIPS_AUDIO = os.path.join('staticdata', 'templates', 'SyntheticDeception
 COMBINECLIPS_AUDIO_FADE_DURATION = 5
 
 # ----------------------------------------------------------------------------------------------------
-# i_generate_title/generate_title
+# j_generate_title/generate_title
 
-GENERATETITLE_NAME = 'i_generate_title'
+GENERATETITLE_NAME = 'j_generate_title'
 GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATETITLE_NAME)
 GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATETITLE_NAME)
 
@@ -363,16 +371,16 @@ GENERATETITLE_OPENAI_TIMEOUT = 60
 GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 
 # ----------------------------------------------------------------------------------------------------
-# j_upload_clip/upload_video
+# k_upload_clip/upload_video
 
-UPLOADCLIP_NAME = 'j_upload_clip'
+UPLOADCLIP_NAME = 'k_upload_clip'
 UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
 UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
 # ----------------------------------------------------------------------------------------------------
-# k_upload_thumbnail/upload_thumbnail
+# l_upload_thumbnail/upload_thumbnail
 
-UPLOADTHUMBNAIL_NAME = 'k_upload_thumbnail'
+UPLOADTHUMBNAIL_NAME = 'l_upload_thumbnail'
 UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADTHUMBNAIL_NAME)
 UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADTHUMBNAIL_NAME)
 

@@ -1,8 +1,8 @@
 import logging
 import os
 
-from stack.g_generate_clip.primary.clip_primary import run as run_clips_primary
-from stack.g_generate_clip.secondary.clip_secondary import run as run_clips_secondary
+from stack.h_generate_clip.primary.clip_primary import run as run_clips_primary
+from stack.h_generate_clip.secondary.clip_secondary import run as run_clips_secondary
 
 from config import config
 

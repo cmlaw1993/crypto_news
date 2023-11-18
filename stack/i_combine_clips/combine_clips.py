@@ -12,7 +12,7 @@ from config import config
 
 def run(clean, input_list):
 
-    logging.info(f'h_combine_clips/combine_clips started')
+    logging.info(f'i_combine_clips/combine_clips started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -47,7 +47,7 @@ def run(clean, input_list):
     logging.info(f'[END  ] Sort input')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Load articles')
+    logging.info(f'[BEGIN] Load digests')
 
     primary_digests = list()
     secondary_digests = list()
@@ -70,7 +70,7 @@ def run(clean, input_list):
 
     digests = primary_digests + secondary_digests
 
-    logging.info(f'[END  ] Load articles')
+    logging.info(f'[END  ] Load digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load clips')
@@ -195,11 +195,11 @@ def run(clean, input_list):
         with open(file_path, 'w') as file:
             yaml.dump(digest.model_dump(), file, sort_keys=False)
 
-    logging.info(f'Saved: {file_path}')
+        logging.info(f'Saved: {file_path}')
 
     logging.info(f'[END  ] Save digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'h_combine_clips/combine_clips ended')
+    logging.info(f'i_combine_clips/combine_clips ended')
 
     return outputs

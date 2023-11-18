@@ -77,12 +77,13 @@ if __name__ == '__main__':
     from stack.c_get_main_topic.get_main_topic import run as run_get_main_topic
     from stack.d_construct_digest.construct_digest import run as run_construct_digest
     from stack.e_curate_digest.curate_digest import run as run_curate_digest
-    from stack.f_download_media.download_media import run as run_download_media
-    from stack.g_generate_clip.generate_clip import run as run_generate_clip
-    from stack.h_combine_clips.combine_clips import run as run_combine_clips
-    from stack.i_generate_title.generate_title import run as run_generate_title
-    from stack.j_upload_clip.upload_clip import run as run_upload_clip
-    from stack.k_upload_thumbnail.upload_thumbnail import run as run_upload_thumbnail
+    from stack.f_review_digest.review_digest import run as run_review_digest
+    from stack.g_download_media.download_media import run as run_download_media
+    from stack.h_generate_clip.generate_clip import run as run_generate_clip
+    from stack.i_combine_clips.combine_clips import run as run_combine_clips
+    from stack.j_generate_title.generate_title import run as run_generate_title
+    from stack.k_upload_clip.upload_clip import run as run_upload_clip
+    from stack.l_upload_thumbnail.upload_thumbnail import run as run_upload_thumbnail
 
     # Init logging
 
@@ -150,6 +151,7 @@ if __name__ == '__main__':
         ('get_main_topic',    True, run_get_main_topic,   status.get_main_topic),
         ('construct_digest',  True, run_construct_digest, status.construct_digest),
         ('curate_digest',     True, run_curate_digest,    status.curate_digest),
+        ('review_digest',     True, run_review_digest,    status.review_digest),
         ('download_media',    True, run_download_media,   status.download_media),
         ('generate_clip',     True, run_generate_clip,    status.generate_clip),
         ('combine_clips',     True, run_combine_clips,    status.combine_clips),

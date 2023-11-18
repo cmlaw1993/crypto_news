@@ -9,7 +9,7 @@ from keys import keys
 
 def run(clean, input_list):
 
-    logging.info(f'k_upload_thumbnails/upload_thumbnails started')
+    logging.info(f'l_upload_thumbnails/upload_thumbnails started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -89,6 +89,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save upload file')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'k_upload_thumbnails/upload_thumbnails ended')
+    logging.info(f'l_upload_thumbnails/upload_thumbnails ended')
 
     return []

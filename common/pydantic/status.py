@@ -13,6 +13,7 @@ class Status(BaseModel):
     get_main_topic: StatusData
     construct_digest: StatusData
     curate_digest: StatusData
+    review_digest: StatusData
     download_media: StatusData
     generate_clip: StatusData
     combine_clips: StatusData

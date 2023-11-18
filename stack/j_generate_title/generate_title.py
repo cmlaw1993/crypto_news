@@ -19,7 +19,7 @@ def format_time(seconds):
 
 def run(clean, input_list):
 
-    logging.info(f'i_generate_title/generate_title started')
+    logging.info(f'j_generate_title/generate_title started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -214,6 +214,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Save vidinfo')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'i_generate_title/generate_title ended')
+    logging.info(f'j_generate_title/generate_title ended')
 
     return [os.path.join(config.GENERATETITLE_RELATIVE_FOLDER, vidinfo.id)]

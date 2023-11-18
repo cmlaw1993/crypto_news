@@ -10,7 +10,7 @@ from common.pydantic.vidinfo import VidInfo
 
 def run(clean, input_list):
 
-    logging.info(f'j_upload_clip/upload_clip started')
+    logging.info(f'k_upload_clip/upload_clip started')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Create folders')
@@ -89,6 +89,6 @@ def run(clean, input_list):
     logging.info(f'[END  ] Upload clip')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'j_upload_clip/upload_clip ended')
+    logging.info(f'k_upload_clip/upload_clip ended')
 
     return [f'{config.UPLOADCLIP_RELATIVE_FOLDER}/{vidinfo.id}']
