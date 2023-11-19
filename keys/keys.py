@@ -6,5 +6,5 @@ CRYPTONEWSAPI_KEY = 'pcuip3qs0iqg7ypmclu48o4yslelxl5fh6teqxwk'
 NEWSDATA_KEY = 'pub_25910d3f548920e96b7c054ef18ebaf689ba4'
 
 OPENAI_KEY_0 = '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'
-OPENAI_KEY_1 = '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'
+OPENAI_KEY_1 = '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'
 

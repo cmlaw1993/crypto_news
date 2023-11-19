@@ -41,13 +41,15 @@ class Media(BaseModel):
 class Digest(BaseModel):
     id: str
     main_topic: str
-    main_topic_source_content: str
     title: str
     oneliner: str
     content: List[str]
     media: Optional[Dict[int, Media]] = None
     clip: Optional[str] = None
-    sources: List[str]
+    sources: str
+    articles: List[str]
+    priority: int
+    priority_score: int
     datetime: str
     date: str
     time: str

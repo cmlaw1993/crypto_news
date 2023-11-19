@@ -5,6 +5,8 @@ class Topic(BaseModel):
     content: str
     source: str
     source_content: str
+    priority: int
+    priority_score: int
     datetime: str
     date: str
     time: str

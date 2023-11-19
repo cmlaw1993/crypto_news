@@ -1,5 +1,6 @@
 import logging
 import yaml
+import re
 
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain.chat_models import ChatOpenAI
@@ -11,15 +12,14 @@ from config import config
 from keys import keys
 
 
-def content_to_list(content: str) -> list:
+def extract_int(input_str):
 
-    content_list = list()
+    numbers = re.findall(r'\d+', input_str)
 
-    for line in content.replace('\r', '').split('\n'):
-        if len(line) > 5:
-            content_list.append(line)
-
-    return content_list
+    if numbers:
+        return int(numbers[0])
+    else:
+        logging.error(f'Unable to extract int from input_str: {input_str}')
 
 
 def run(input_list):
@@ -51,82 +51,136 @@ def run(input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Get main topics')
 
-    system_template = f'You are a top editor for a cryptocurrency news agency.'
-    system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
-
-    source_rank = ''
-    for source, rank in config.GETMAINTOPIC_RANK_SOURCE_RANK.items():
-        source_rank += f'{source.lower()}: {rank}\n'
-
-    source_title = ''
-    for article in articles:
-        source_title += f'{article.source.lower()}: {article.title}\n'
-
-    human_template = f'The following is a list of cryptocurrency news sources and their rank:\n'\
-                     f'\n' \
-                     f'{source_rank}\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'The following is a list of headlines produces by the cryptocurrency news sources:\n' \
-                     f'\n' \
-                     f'{source_title}\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'Your task is to summarize all they keypoints from the headlines and sort them by points.\n' \
-                     f'Please note, since some headlines might discuss similar topics.\n' \
-                     f'If the essence of those topics are the same, group them under a single keypoint.\n' \
-                     f'Keypoints should be short and sweet, as in the headline of an article.\n'\
-                     f'Do not generalize infromation in keypoints.\n' \
-                     f'Remove any keypoints that cointain speculations.\n' \
-                     f'Strictly, keep the keypoints within {config.MAINTOPIC_RANK_MAX_WORDS} words.\n' \
-                     f'The points of a keypoint is calculated by summing all the cryptocurrency news source ranking number that they appear in.\n' \
-                     f'Return your answer in this format:\n' \
-                     f'\n' \
-                     f'<points>:<keypoint>:<comma-separated list of sources>\n' \
-                     f'<points>:<keypoint>:<comma-separated list of sources>\n' \
-                     f'<points>:<keypoint>:<comma-separated list of sources>\n' \
-                     f'\n'
-
-    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-
-    chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-    prompt = chat_prompt.format_prompt().to_messages()
-
-    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
-                      model_name=config.MAINTOPIC_RANK_OPENAI_MODEL,
-                      temperature=config.MAINTOPIC_RANK_OPENAI_TEMPERATURE,
-                      request_timeout=config.MAINTOPIC_RANK_OPENAI_TIMEOUT)
-    res = chat(prompt)
-
-    lines = content_to_list(res.content)
-
     main_topics = list()
+    messages = list()
 
-    for priority, line in enumerate(lines):
+    chats = [
+        ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
+                   model_name=config.CONSTRUCTDIGEST_OPENAI_MODEL,
+                   temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE,
+                   request_timeout=config.CONSTRUCTDIGEST_OPENAI_TIMEOUT),
+        ChatOpenAI(openai_api_key=keys.OPENAI_KEY_1,
+                   model_name=config.CONSTRUCTDIGEST_OPENAI_MODEL,
+                   temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE,
+                   request_timeout=config.CONSTRUCTDIGEST_OPENAI_TIMEOUT)
+    ]
 
-        if priority >= config.MAINTOPIC_RANK_MAX_TOPICS:
-            break
+    for idx, article in enumerate(articles):
 
-        score = line.split(':')[0]
-        keypoint = line.split(':')[1]
-        sources = line.split(':')[2]
+        system_template = f'You are a top editor for a cryptocurrency and AI news agency.' \
+                          f' Your target audience ranges from enthusiasts to top cryptocurrency traders, fund managers, and AI investors,' \
+                          f' who trusts in the objectiveness and fairness of your publication' \
+                          f' to keep up to date with the latest happenings in the crypto and AI world.'
+        system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
-        maintopic_data = {
-            'id': f'main_topic.rank.{priority:02}.{utils.sanitize_file_name(keypoint)}.yaml',
-            'content': keypoint,
-            'source': sources,
-            'source_content': score,
-            'datetime': config.ACTIVE_DATETIME_STR,
-            'date': config.ACTIVE_TIME_STR,
-            'time': config.ACTIVE_TIME_STR
-        }
+        headline_str = ''
+        for idx, main_topic in enumerate(main_topics):
+            headline_str += f'Headline {idx}: {main_topic.content}\n'
+        if headline_str == '':
+            headline_str += '    <List is currently empty>'
 
-        main_topic = Topic(**maintopic_data)
-        main_topics.append(main_topic)
+        new_str = ''
+        new_str = article.title
+
+        human_template = f'The following is a list of cryptocurrency news articles that are to be published for the day:\n'\
+                         f'\n' \
+                         f'{headline_str}\n' \
+                         f'\n' \
+                         f'\n' \
+                         f'\n' \
+                         f'A journalist has brought in an additional article as follows:\n' \
+                         f'\n' \
+                         f'{new_str}\n' \
+                         f'\n' \
+                         f'\n' \
+                         f'\n' \
+                         f'Your task is to determine if the article is to be accepted for the day\'s publication.\n' \
+                         f'You can only accept the article if it meets the following criteria:\n' \
+                         f'1. The subject matter in the new article has not already appeared in the existing list. Ignore this criteria if the list of articles is empty.\n' \
+                         f'2. The article is not about price prediction or analysis of a token. If you could not make a proper determination, accept the article anyways.\n' \
+                         f'3. The article is not about a promotion. If you could not make a proper determination, accept the article anyways.\n' \
+                         f'4. The article is not about a tutorial.  If you could not make a proper determination, accept the article anyways.\n' \
+                         f'5. The headline is not written in the form of a question.\n' \
+                         f'\n' \
+                         f'Return your answer in this format:\n' \
+                         f'\n' \
+                         f'<accepted/repeated/rejected>:<reason for accepting/index of headline repeated/reason for rejection>\n' \
+                         f'\n'
+
+        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
+        prompt = chat_prompt.format_prompt().to_messages()
+
+        chat = chats[idx % len(chats)]
+        res = chat(prompt)
+
+        answer = res.content
+        ret = answer.split(':')[0].strip().lower()
+        i = answer.split(':')[1].strip()
+
+        if ret == 'accepted' or ret == '<accepted>':
+
+            maintopic_data = {
+                # id is set as article.title temporarily. We will change it later
+                'id': article.title,
+                'content': article.title,
+                'priority': 0,
+                'priority_score': 0,
+                'source': article.source,
+                'source_content': '',
+                'datetime': config.ACTIVE_DATETIME_STR,
+                'date': config.ACTIVE_TIME_STR,
+                'time': config.ACTIVE_TIME_STR
+            }
+
+            main_topic = Topic(**maintopic_data)
+            main_topics.append(main_topic)
+
+        elif ret == 'repeated' or ret == '<repeated>':
+
+            main_topics[extract_int(i)].source += f',{article.source}'
+
+        elif ret == 'rejected' or ret == '<rejected>':
+
+            pass
+
+        else:
+
+            logging.error(f'Unknown response: {answer}')
+
+        messages.append(f'Article:{article.title}')
+        messages.append(f'Return :{ret}')
+        messages.append(f'Reason :{idx}')
+        messages.append(f'\n')
+
+    for message in messages:
+        logging.info(message)
 
     logging.info(f'[END  ] Get main topics')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Rank main topics')
+
+    for main_topic in main_topics:
+        sources = set(main_topic.source.split(','))
+        for source in sources:
+            main_topic.priority_score += config.GETMAINTOPIC_RANK_SOURCE_RANK[source.lower()]
+
+    main_topics = sorted(main_topics, key=lambda x: x.priority_score, reverse=True)
+
+    for idx, main_topic in enumerate(main_topics):
+        main_topic.priority = idx
+        main_topic.id = f'main_topic.rank.{idx:02}.{main_topic.priority_score:03}.{utils.sanitize_file_name(main_topic.content)}'
+
+    logging.info(f'[BEGIN] Rank main topics')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Select first n main topics')
+
+    main_topics = main_topics[:config.MAINTOPIC_RANK_MAX_TOPICS]
+
+    logging.info(f'[BEGIN] Rank main topics')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Save main topics')
