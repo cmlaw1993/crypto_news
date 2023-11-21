@@ -178,12 +178,6 @@ def run(clean, input_list):
         description += f'{line}\n'
     description += f'\n'
 
-    # Add timestamps
-
-    for idx, chapter in enumerate(sorted_chapters):
-        description += f'{format_time(chapter.ts)} {chapter.title}\n'
-    description += f'\n'
-
     # Add tags
 
     tags = set()
@@ -199,6 +193,21 @@ def run(clean, input_list):
         if tmp not in tags:
             description += f'#{tmp} '
     description += '\n'
+
+    # Add timestamps
+
+    for idx, chapter in enumerate(sorted_chapters):
+        description += f'{format_time(chapter.ts)} {chapter.title}\n'
+    description += f'\n'
+
+    # Add disclaimer
+
+    description += 'Disclaimer:'
+    description += 'The information provided in this video is for educational purposes and shall not be misconstrued' \
+                   ' as financial advice. The New Satellite assumes no liability for any actions taken based on'\
+                   ' the presented content.'
+    description += f'\n'
+
 
     vidinfo.description = description
 
