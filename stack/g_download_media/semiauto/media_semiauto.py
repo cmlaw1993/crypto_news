@@ -51,8 +51,6 @@ def generate_keywords(digest):
                      f'3:<words>' \
                      f'4:<words>'
 
-
-# f' You should return the keywords which corresponds to the image you would like to use.' \
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
     chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
@@ -73,7 +71,7 @@ def generate_keywords(digest):
 
     digest_type = digest.id.split('.')[1]
     priority = digest.id.split('.')[2]
-    id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.Title'
+    id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.0.Title'
 
     media_data = {
         'id': id,
@@ -95,10 +93,9 @@ def generate_keywords(digest):
 
         line_idx = int(line_result[0]) + 1
 
-
         keyword = line_result[1].strip()
 
-        id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.{utils.sanitize_file_name(keyword)}'
+        id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.{line_idx}.{utils.sanitize_file_name(keyword)}'
 
         media_data = {
             'id': id,
