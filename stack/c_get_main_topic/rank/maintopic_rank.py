@@ -30,7 +30,7 @@ def run(input_list):
     articles = list()
     source_title = set()
 
-    for article_file in input_list:
+    for article_file in sorted(input_list):
         file_path = f'{config.DATA_FOLDER}/{article_file}'
 
         with open(file_path, 'r') as yaml_file:
@@ -40,7 +40,7 @@ def run(input_list):
 
         if article.source.lower() in config.GETMAINTOPIC_RANK_SOURCE_RANK.keys():
 
-            s_t = article.source.lower() + "." + article.title.lower()
+            s_t = article.source.lower() + "." + utils.sanitize_file_name(article.title)
 
             if s_t not in source_title:
                 source_title.add(s_t)
