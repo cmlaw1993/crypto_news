@@ -303,8 +303,7 @@ def run(clean, input_list):
 
         digest.id = f'digest.{type}.{priority:02}.{priority_score:03}.{name}.yaml'
 
-        if type == "primary" or type == 'secondary':
-            output_list.append(f'{config.CURATEDIGEST_RELATIVE_FOLDER}/{digest.id}')
+        output_list.append(f'{config.CURATEDIGEST_RELATIVE_FOLDER}/{digest.id}')
 
         file_path = f'{config.CURATEDIGEST_FOLDER}/{digest.id}'
         with open(file_path, 'w') as file:

@@ -24,56 +24,59 @@ def run(clean, input_list):
     logging.info(f'[END  ] Create folders')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Clean')
+    logging.info(f'[BEGIN] Load and save digests')
 
-    if clean == True:
-        os.system(f'rm -rf {config.REVIEWDIGEST_FOLDER}/*')
-        logging.info(f'Cleaned: {config.REVIEWDIGEST_FOLDER}')
-    else:
-        logging.info("Clean skipped")
+    # Only load and save digests if they do not already exists
 
-    logging.info(f'[END  ] Clean')
+    files = os.listdir(config.REVIEWDIGEST_FOLDER)
+    if len(files) == 0:
 
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Load digests')
+        for digest_file in input_list:
 
-    digests = list()
+            input_file_path = os.path.join(config.DATA_FOLDER, digest_file)
+            with open(input_file_path, 'r') as yaml_file:
+                yaml_data = yaml.safe_load(yaml_file)
+            digest = Digest(**yaml_data)
 
-    for digest_file in input_list:
+            output_file_path = f'{config.REVIEWDIGEST_FOLDER}/{digest.id}'
+            with open(output_file_path, 'w') as yaml_file:
+                yaml.dump(digest.model_dump(), yaml_file, sort_keys=False)
 
-        file_path = os.path.join(config.DATA_FOLDER, digest_file)
-        with open(file_path, 'r') as yaml_file:
-            yaml_data = yaml.safe_load(yaml_file)
-
-        digest = Digest(**yaml_data)
-        digests.append(digest)
-
-    logging.info(f'[END  ] Load digests')
+    logging.info(f'[END  ] Load and save digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Review digests')
 
-    logging.info(f'Please review the curated digests for the day.  Then press ENTER.')
-    input()
+    outputs = None
+    matched = True
 
-    logging.info(f'[END  ] Review digests')
+    while True:
 
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Save digest')
+        logging.info(f'Please review the curated digests for the day.  Then press ENTER.')
+        input()
 
-    outputs = list()
+        outputs = list()
 
-    for digest in digests:
+        for f in os.listdir(config.REVIEWDIGEST_FOLDER):
 
-        outputs.append(f'{config.REVIEWDIGEST_RELATIVE_FOLDER}/{digest.id}')
+            file_path = os.path.join(config.REVIEWDIGEST_FOLDER, f)
 
-        file_path = f'{config.REVIEWDIGEST_FOLDER}/{digest.id}'
-        with open(file_path, 'w') as file:
-            yaml.dump(digest.model_dump(), file, sort_keys=False)
+            with open(file_path, 'r') as yaml_file:
+                yaml_data = yaml.safe_load(yaml_file)
 
-        logging.info(f'Saved: {digest.id}')
+            digest = Digest(**yaml_data)
 
-    logging.info(f'[END  ] Save digest')
+            if digest.id != f:
+                logging.warning(f'File name does not match digest id: {digest.id}')
+                matched = False
+
+            if 'primary' in digest.id or 'secondary' in digest.id:
+                outputs.append(os.path.join(config.REVIEWDIGEST_RELATIVE_FOLDER, f))
+
+        if matched:
+            break
+
+    logging.info(f'[END  ] Review digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'{config.REVIEWDIGEST_NAME} ended')
