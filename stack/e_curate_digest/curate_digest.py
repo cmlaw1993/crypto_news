@@ -175,15 +175,14 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Compare to previous day\'s digests')
 
-    accepted_digests = list(digests)
+    accepted_digests = list()
     repeated_digests = list()
+    prev_digests = list()
     verdicts = list()
 
     for i in range(config.CURATEDIGEST_DAYS_AGO):
 
         day = i + 1
-
-        prev_digests = list()
 
         prev_date = utils.to_date_str(config.ACTIVE_DATE - timedelta(days=day))
         folder = os.path.join(config.VARDATA_FOLDER, prev_date, config.CURATEDIGEST_NAME)
@@ -203,77 +202,74 @@ def run(clean, input_list):
             prev_digest = Digest(**yaml_data)
             prev_digests.append(prev_digest)
 
-        if len(prev_digests) > 0:
+    if len(prev_digests) > 0:
 
-            tmp_digests = list(accepted_digests)
-            accepted_digests = list()
+        prev_digests = sorted(prev_digests, key=lambda x: x.priority)
+        digests = sorted(digests, key=lambda x: x.priority)
 
-            prev_digests = sorted(prev_digests, key=lambda x: x.priority)
-            accepted_digests = sorted(accepted_digests, key=lambda x: x.priority)
+        for idx, digest in enumerate(digests):
 
-            for idx, digest in enumerate(tmp_digests):
+            # A simple system template seems to work better to tone done the aggression
+            # of the AI in filtering out digests.
+            system_template = f'You are a top editor for a cryptocurrency and AI news agency.'
+            system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
-                # A simple system template seems to work better to tone done the aggression
-                # of the AI in filtering out digests.
-                system_template = f'You are a top editor for a cryptocurrency and AI news agency.'
-                system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
+            prev_str = ''
+            for idx, prev in enumerate(prev_digests):
+                prev_str += digest_to_text(prev, idx)
 
-                prev_str = ''
-                for idx, prev in enumerate(prev_digests):
-                    prev_str += digest_to_text(prev, idx)
+            new_str = ''
+            new_str += digest_to_text(digest)
 
-                new_str = ''
-                new_str += digest_to_text(digest)
+            human_template = f'The following is the list of news articles that have been published yesterday:\n' \
+                             f'\n' \
+                             f'{prev_str}\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'A journalist has brought in an additional article as follows:\n' \
+                             f'\n' \
+                             f'{new_str}\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'Your task is to determine if the article is to be accepted for the day\'s publication.\n' \
+                             f'You can only accept the article if it does not repeat an article that have been previously published.\n' \
+                             f'You should accept an article if it provides a new angle or new information on an article that have been previously published.\n' \
+                             f'\n' \
+                             f'Return your answer in this format:\n' \
+                             f'\n' \
+                             f'<accepted/rejected>:<reason for accepting/rejecting>:<article title from previous day that collides with current day>\n' \
+                             f'\n'
 
-                human_template = f'The following is the list of news articles that have been published {day} day(s) ago:\n' \
-                                 f'\n' \
-                                 f'{prev_str}\n' \
-                                 f'\n' \
-                                 f'\n' \
-                                 f'\n' \
-                                 f'A journalist has brought in an additional article as follows:\n' \
-                                 f'\n' \
-                                 f'{new_str}\n' \
-                                 f'\n' \
-                                 f'\n' \
-                                 f'\n' \
-                                 f'Your task is to determine if the article is to be accepted for the day\'s publication.\n' \
-                                 f'You can only accept the article if it does not repeat an article that have been previously published.\n' \
-                                 f'You should accept an article if it provides a new angle or new information on an article that have been previously published.\n' \
-                                 f'\n' \
-                                 f'Return your answer in this format:\n' \
-                                 f'\n' \
-                                 f'<accepted/rejected>:<reason for accepting/rejecting>:<article title from previous day that collides with current day>\n' \
-                                 f'\n'
+            human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
-                human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+            chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
+            prompt = chat_prompt.format_prompt().to_messages()
 
-                chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-                prompt = chat_prompt.format_prompt().to_messages()
+            chat = chats[idx % len(chats)]
+            res = chat(prompt)
 
-                chat = chats[idx % len(chats)]
-                res = chat(prompt)
+            answers = res.content.split(':')
 
-                answers = res.content.split(':')
+            ret = answers[0].strip().lower()
+            reason = answers[1]
+            article = ''
+            if len(answers) > 2:
+                article = answers[2]
 
-                ret = answers[0].strip().lower()
-                reason = answers[1]
-                article = ''
-                if len(answers) > 2:
-                    article = answers[2]
+            if ret == 'accepted' or ret == '<accepted>':
+                accepted_digests.append(digest)
+                verdicts.append(f'Accepted : {digest.title} : {reason}')
+            else:
+                digest.reason = f'{res.content}'
+                repeated_digests.append(digest)
+                verdicts.append(f'Rejected : {digest.title} : {article} : {reason}')
 
-                if ret == 'accepted' or ret == '<accepted>':
-                    accepted_digests.append(digest)
-                    verdicts.append(f'Accepted : {digest.title} : {reason}')
-                else:
-                    digest.reason = f'{prev_date}:{res.content}'
-                    repeated_digests.append(digest)
-                    verdicts.append(f'Rejected : {digest.title} : {prev_date} : {article} : {reason}')
+        for verdict in verdicts:
+            logging.info(verdict)
 
-    for verdict in verdicts:
-        logging.info(verdict)
-
-    digests = accepted_digests
+        digests = accepted_digests
 
     logging.info(f'[END  ] Compare to previous day\'s digests')
 
