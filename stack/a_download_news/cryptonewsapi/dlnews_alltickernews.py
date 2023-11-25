@@ -17,6 +17,7 @@ def run(start_dt, end_dt):
 
     articles = list()
 
+    session = requests.Session()
     page = 0
 
     while True:
@@ -30,7 +31,7 @@ def run(start_dt, end_dt):
         utc_dt = None
 
         try:
-            response = requests.get(url)
+            response = session.get(url)
         except:
             logging.error(f'Http request error, url:{url}')
 
