@@ -1,9 +1,9 @@
 from datetime import datetime
+import requests
 import logging
 import pytz
+import time
 import yaml
-
-from newsdataapi import NewsDataApiClient
 
 from common import utils
 from common.pydantic.article import Article
@@ -20,21 +20,33 @@ def run(start_dt, end_dt):
     page = None
     response = list()
 
-    news_data = NewsDataApiClient(apikey=keys.NEWSDATA_KEY)
+    session = requests.Session()
 
     while True:
 
         utc_dt = None
 
+        url = f'https://newsdata.io/api/1/crypto?apikey={keys.NEWSDATA_KEY}' \
+              f'&language=en' \
+              f'&size=50' \
+              f'&excludedomain={config.DOWNLOADNEWS_NEWSDATA_EXCLUDEDOMAIN}'
+
+        if page is not None:
+            url += f'&page={page}'
+
         try:
-            response = news_data.crypto_api(language='en',
-                                            excludedomain=config.DOWNLOADNEWS_NEWSDATA_EXCLUDEDOMAIN,
-                                            size=50,
-                                            page=page)
+            # Add a sleep to avoid hitting rate limit
+            time.sleep(0.5)
+            response = session.get(url)
         except:
             logging.error('Downloading articles from NewsData.io failed')
 
-        for result in response['results']:
+        if response.status_code != 200:
+            logging.error(f'Http request returned error, url:{url}, status_code:{response.status_code}, text:{response.text}')
+
+        response_data = response.json()
+
+        for result in response_data['results']:
 
             utc_dt = datetime.strptime(result['pubDate'], '%Y-%m-%d %H:%M:%S')
             utc_dt = utc_dt.astimezone(pytz.timezone('UTC'))
@@ -93,7 +105,7 @@ def run(start_dt, end_dt):
         if utc_dt < start_dt:
             break
 
-        page = str(response.get('nextPage', None))
+        page = str(response_data.get('nextPage', None))
         if page == 'None':
             break
 
