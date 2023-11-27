@@ -84,7 +84,7 @@ def run(clean, input_list):
     logging.info(f'[END  ] Sort digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Curate digest')
+    logging.info(f'[BEGIN] Compare to previous day\'s digests')
 
     chats = [
         ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
@@ -96,84 +96,6 @@ def run(clean, input_list):
                    temperature=config.CONSTRUCTDIGEST_OPENAI_TEMPERATURE,
                    request_timeout=config.CONSTRUCTDIGEST_OPENAI_TIMEOUT)
     ]
-
-    accepted_digests = list()
-    rejected_digests = list()
-    
-    verdicts = list()
-
-    for idx, digest in enumerate(digests):
-
-        system_template = f'You are a top editor for a cryptocurrency and AI news agency.' \
-                          f' Your target audience ranges from enthusiasts to top cryptocurrency traders, fund managers, and AI investors,' \
-                          f' who trusts in the objectiveness and fairness of your publication' \
-                          f' to keep up to date with the latest happenings in the crypto and AI world.'
-        system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
-
-        accepted_str = ''
-        for idx, accepted in enumerate(accepted_digests):
-            accepted_str += digest_to_text(accepted, idx)
-        if accepted_str == '':
-            accepted_str += '    <List is currently empty>'
-
-        new_str = ''
-        new_str += digest_to_text(digest)
-
-        human_template = f'The following is the list of news articles that are to be published for the day:\n' \
-                         f'\n' \
-                         f'{accepted_str}\n' \
-                         f'\n' \
-                         f'\n' \
-                         f'\n' \
-                         f'A journalist has brought in an additional article as follows:\n' \
-                         f'\n' \
-                         f'{new_str}\n' \
-                         f'\n' \
-                         f'\n' \
-                         f'\n' \
-                         f'Your task is to determine if the article is to be accepted for the day\'s publication.\n' \
-                         f'You can only accept the article if it meets the following criteria:\n' \
-                         f'1. The subject matter in the new article has not already appeared in the existing list. Ignore this criteria if the list of articles is empty.\n' \
-                         f'2. The article is not about price prediction or analysis of a token. If you could not make a proper determination, accept the article anyways.\n' \
-                         f'3. The article is not about a promotion. If you could not make a proper determination, accept the article anyways.\n' \
-                         f'4. The article is not about a tutorial.  If you could not make a proper determination, accept the article anyways.\n' \
-                         f'5. The headline is not written in the form of a question.\n' \
-                         f'\n' \
-                         f'Return your answer in this format:\n' \
-                         f'\n' \
-                         f'<yes/no>:<reason for accepting/rejecting>\n' \
-                         f'\n'
-
-        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-        prompt = chat_prompt.format_prompt().to_messages()
-
-        chat = chats[idx % len(chats)]
-        res = chat(prompt)
-
-        answer = res.content
-        yn = answer.split(':')[0].strip().lower()
-        reason = answer.split(':')[1]
-
-        if yn == 'yes' or yn == '<yes>':
-            digest.reason = f'{yn} : {reason}'
-            accepted_digests.append(digest)
-            verdicts.append(f'Accepted : {digest.title} : {reason}')
-        else:
-            digest.reason = reason
-            rejected_digests.append(digest)
-            verdicts.append(f'Rejected : {digest.title} : {reason}')
-
-    for verdict in verdicts:
-        logging.info(verdict)
-
-    digests = list(accepted_digests)
-
-    logging.info(f'[END  ] Curate digest')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Compare to previous day\'s digests')
 
     accepted_digests = list()
     repeated_digests = list()
@@ -319,9 +241,6 @@ def run(clean, input_list):
 
     for digest in unused_digests:
         save_digest(digest, "unused")
-
-    for digest in rejected_digests:
-        save_digest(digest, "z_rejected")
 
     for digest in repeated_digests:
         save_digest(digest, "z_repeated")

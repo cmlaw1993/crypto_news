@@ -46,7 +46,8 @@ class Digest(BaseModel):
     content: List[str]
     media: Optional[Dict[int, Media]] = None
     clip: Optional[str] = None
-    sources: str
+    sources: List[str]
+    source_content: List[str]
     articles: List[str]
     priority: int
     priority_score: int
