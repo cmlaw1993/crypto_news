@@ -133,7 +133,6 @@ STATUS_DEFAULT_VALUE = {
     'review_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'download_media':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'generate_clip':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'combine_clips':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'generate_title':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'upload_clip':      {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
     'upload_thumbnail': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
@@ -404,23 +403,9 @@ GENERATECLIP_V1_SECONDARY_ONELINE_BORDER_HEIGHT = 40
 GENERATECLIP_V1_SECONDARY_ONELINE_TEXTBOX_QUOTA = 0.2
 
 # ----------------------------------------------------------------------------------------------------
-# i_combine_clips
+# i_generate_title
 
-COMBINECLIPS_NAME = 'i_combine_clips'
-COMBINECLIPS_FOLDER = os.path.join(VARDATA_DATE_FOLDER, COMBINECLIPS_NAME)
-COMBINECLIPS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, COMBINECLIPS_NAME)
-
-COMBINECLIPS_INTRO = os.path.join('staticdata', 'templates', 'TestIntro.mp4')
-COMBINECLIPS_OUTRO = os.path.join('staticdata', 'templates', 'TestOutro.mp4')
-
-COMBINECLIPS_AUDIO = os.path.join('staticdata', 'templates', 'SyntheticDeception.mp3')
-
-COMBINECLIPS_AUDIO_FADE_DURATION = 5
-
-# ----------------------------------------------------------------------------------------------------
-# j_generate_title
-
-GENERATETITLE_NAME = 'j_generate_title'
+GENERATETITLE_NAME = 'i_generate_title'
 GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATETITLE_NAME)
 GENERATETITLE_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATETITLE_NAME)
 
@@ -431,16 +416,16 @@ GENERATETITLE_OPENAI_TIMEOUT = 60
 GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 
 # ----------------------------------------------------------------------------------------------------
-# k_upload_clip
+# j_upload_clip
 
-UPLOADCLIP_NAME = 'k_upload_clip'
+UPLOADCLIP_NAME = 'j_upload_clip'
 UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
 UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
 # ----------------------------------------------------------------------------------------------------
-# l_upload_thumbnail
+# k_upload_thumbnail
 
-UPLOADTHUMBNAIL_NAME = 'l_upload_thumbnail'
+UPLOADTHUMBNAIL_NAME = 'k_upload_thumbnail'
 UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADTHUMBNAIL_NAME)
 UPLOADTHUMBNAIL_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADTHUMBNAIL_NAME)
 
