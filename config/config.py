@@ -103,11 +103,15 @@ TEMPLATES_FOLDER = os.path.join(STATICDATA_FOLDER, 'templates')
 
 VIDEO_WIDTH = 1920
 VIDEO_HEIGHT = 1080
-VIDEO_BITRATE = '12000k'
-VIDEO_FPS = 30
+VIDEO_FPS = 60
+VIDEO_BITRATE = '50000k'
+VIDEO_PIXEL_FORMAT = 'yuv420p'
+VIDEO_COLOR_RANGE = 'tv'
 VIDEO_CODEC = 'h264_nvenc'
 VIDEO_CODEC_PRESET = 'fast'
-AUDIO_CODEC = 'libmp3lame'
+
+AUDIO_CODEC = 'aac'
+AUDIO_BITRATE = '384k'
 
 # ####################################################################################################
 # youtube data api
@@ -298,57 +302,109 @@ DOWNLOADMEDIA_SEMIAUTO_OPENAI_TEMPERATURE = 0
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_TIMEOUT = 60
 
 # ----------------------------------------------------------------------------------------------------
-# h_generate_clip/generate_clip
+# h_generate_clip
 
 GENERATECLIP_NAME = 'h_generate_clip'
 GENERATECLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATECLIP_NAME)
 GENERATECLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, GENERATECLIP_NAME)
 
 GENERATECLIP_MODULES = [
-    'primary',
-    'secondary',
+    'v1',
 ]
 
-GENERATECLIP_PRIMARY_SLIDE_WAIT_DURATION = 0.50
-GENERATECLIP_PRIMARY_SLIDE_DURATION = 0.35
-GENERATECLIP_PRIMARY_SEC_PER_WORD = 0.5
+GENERATECLIP_V1_CLEAN_TMP_FILES = True
 
-GENERATECLIP_PRIMARY_TITLE_FONT = 'Archivo-Black'
-GENERATECLIP_PRIMARY_TITLE_SIZE = 75
-GENERATECLIP_PRIMARY_TITLE_COLOR = 'yellow'
-GENERATECLIP_PRIMARY_TITLE_BORDER_WIDTH = 150
-GENERATECLIP_PRIMARY_TITLE_BORDER_HEIGHT = 150
-GENERATECLIP_PRIMARY_TITLE_GRAVITY = 'Center'
-GENERATECLIP_PRIMARY_TITLE_BACKDROP = os.path.join(f'{TEMPLATES_FOLDER}', 'TitleBackdrop.png')
+GENERATECLIP_V1_SEC_PER_WORD = 0.4
 
-GENERATECLIP_PRIMARY_CONTENT_FONT = 'Archivo-Black'
-GENERATECLIP_PRIMARY_CONTENT_SIZE = 60
-GENERATECLIP_PRIMARY_CONTENT_OVERSIZED_FONT_SIZE = 50
-GENERATECLIP_PRIMARY_CONTENT_OVERSIZED_CHAR_LIMIT = 150
-GENERATECLIP_PRIMARY_CONTENT_COLOR = 'white'
-GENERATECLIP_PRIMARY_CONTENT_BORDER_WIDTH = 50
-GENERATECLIP_PRIMARY_CONTENT_BORDER_HEIGHT = 30
-GENERATECLIP_PRIMARY_CONTENT_GRAVITY = 'South'
-GENERATECLIP_PRIMARY_CONTENT_BACKDROP = (
-    (729, os.path.join(f'{TEMPLATES_FOLDER}', 'ContentBackdrop4Lines.png')),
-    (815, os.path.join(f'{TEMPLATES_FOLDER}', 'ContentBackdrop3Lines.png')),
-    (901, os.path.join(f'{TEMPLATES_FOLDER}', 'ContentBackdrop2Lines.png')),
+GENERATECLIP_V1_AUDIO = [
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'CyberpunkFuture_A.wav'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'CyberpunkFuture_B.wav'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'CyberpunkFuture_C.wav'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'CyberpunkFuture_D.wav')
+]
+
+GENERATECLIP_V1_INTRO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'Intro.mp4')
+
+GENERATECLIP_V1_OUTRO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'Outro.mov')
+GENERATECLIP_V1_OUTRO_OVERLAP_DURATION = 0.5
+
+GENERATECLIP_V1_LOGO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'Logo.png')
+
+GENERATECLIP_V1_INTRO_TRANSITiON = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'IntroTransition.wav')
+
+GENERATECLIP_V1_PRIMARY_MEDIA_TRANSITION = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'PrimaryMediaTransition.mov')
+GENERATECLIP_V1_PRIMARY_BACKGROUND = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'PrimaryBackground.mp4')
+GENERATECLIP_V1_PRIMARY_TRANSITION = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'PrimaryTransition.mov')
+
+GENERATECLIP_V1_PRIMARY_ENTRY_DELAY = 0.15
+GENERATECLIP_V1_PRIMARY_ENTRY_DURATION = 0.883
+
+GENERATECLIP_V1_PRIMARY_TEXTBOX_WIDTH = 0.8979 * VIDEO_WIDTH
+GENERATECLIP_V1_PRIMARY_TEXTBOX_HEIGHT = 0.3019 * VIDEO_HEIGHT
+
+GENERATECLIP_V1_PRIMARY_TITLE_FONT = 'Roboto-Black'
+GENERATECLIP_V1_PRIMARY_TITLE_SIZE = 44
+GENERATECLIP_V1_PRIMARY_TITLE_COLOR = 'white'
+GENERATECLIP_V1_PRIMARY_TITLE_GRAVITY = 'NorthWest'
+GENERATECLIP_V1_PRIMARY_TITLE_BORDER_WIDTH = 20
+GENERATECLIP_V1_PRIMARY_TITLE_BORDER_HEIGHT = 20
+GENERATECLIP_V1_PRIMARY_TITLE_TEXTBOX_QUOTA = 0.27
+
+GENERATECLIP_V1_PRIMARY_CONTENT_FONT = 'Roboto-Thin'
+GENERATECLIP_V1_PRIMARY_CONTENT_SIZE = 52
+GENERATECLIP_V1_PRIMARY_CONTENT_COLOR = 'white'
+GENERATECLIP_V1_PRIMARY_CONTENT_GRAVITY = 'West'
+GENERATECLIP_V1_PRIMARY_CONTENT_BORDER_WIDTH = 23
+GENERATECLIP_V1_PRIMARY_CONTENT_BORDER_HEIGHT = 0
+GENERATECLIP_V1_PRIMARY_CONTENT_TEXTBOX_QUOTA = 0.6
+
+GENERATECLIP_V1_SECONDARY_BACKGROUND = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryBackground.mp4')
+
+GENERATECLIP_V1_SECONDARY_TRANSITION_DURATION = 1.2
+GENERATECLIP_V1_SECONDARY_TRANSITION_AUDIO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'SecondaryTransition.wav')
+
+GENERATECLIP_V1_SECONDARY_ENTRY_DURATION = 1.2
+
+GENERATECLIP_V1_SECONDARY_TEXTBOX_ENTER = (
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox2LEnter.mov'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox3LEnter.mov'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox4LEnter.mov')
 )
 
-GENERATECLIP_SECONDARY_SLIDE_DURATION = 0.35
-GENERATECLIP_SECONDARY_SEC_PER_WORD = 0.5
+GENERATECLIP_V1_SECONDARY_TEXTBOX_STATIC = (
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox2LStatic.png'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox3LStatic.png'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox4LStatic.png')
+)
 
-GENERATECLIP_SECONDARY_TITLE_FONT = 'Archivo-Black'
-GENERATECLIP_SECONDARY_TITLE_SIZE = 75
-GENERATECLIP_SECONDARY_TITLE_COLOR = 'red'
-GENERATECLIP_SECONDARY_TITLE_BORDER_WIDTH = 150
-GENERATECLIP_SECONDARY_TITLE_BORDER_HEIGHT = 150
-GENERATECLIP_SECONDARY_TITLE_GRAVITY = 'Center'
-GENERATECLIP_SECONDARY_TITLE_BACKGROUND = os.path.join(f'{TEMPLATES_FOLDER}', 'TitleBackground.png')
-GENERATECLIP_SECONDARY_TITLE_BACKDROP = os.path.join(f'{TEMPLATES_FOLDER}', 'TitleBackdrop.png')
+GENERATECLIP_V1_SECONDARY_TEXTBOX_EXIT = (
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox2LExit.mov'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox3LExit.mov'),
+    os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'SecondaryTBox4LExit.mov')
+)
+
+GENERATECLIP_V1_SECONDARY_TEXTBOX_WIDTH = (
+    0.6411 * VIDEO_WIDTH,
+    0.6411 * VIDEO_WIDTH,
+    0.6411 * VIDEO_WIDTH
+)
+
+GENERATECLIP_V1_SECONDARY_TEXTBOX_HEIGHT = (
+    0.2306 * VIDEO_HEIGHT,
+    0.2926 * VIDEO_HEIGHT,
+    0.3444 * VIDEO_HEIGHT,
+)
+
+GENERATECLIP_V1_SECONDARY_ONELINE_FONT = 'Roboto-Medium'
+GENERATECLIP_V1_SECONDARY_ONELINE_SIZE = 52
+GENERATECLIP_V1_SECONDARY_ONELINE_COLOR = 'white'
+GENERATECLIP_V1_SECONDARY_ONELINE_GRAVITY = 'Center'
+GENERATECLIP_V1_SECONDARY_ONELINE_BORDER_WIDTH = 20
+GENERATECLIP_V1_SECONDARY_ONELINE_BORDER_HEIGHT = 40
+GENERATECLIP_V1_SECONDARY_ONELINE_TEXTBOX_QUOTA = 0.2
 
 # ----------------------------------------------------------------------------------------------------
-# i_combine_clips/combine_clips
+# i_combine_clips
 
 COMBINECLIPS_NAME = 'i_combine_clips'
 COMBINECLIPS_FOLDER = os.path.join(VARDATA_DATE_FOLDER, COMBINECLIPS_NAME)
@@ -362,7 +418,7 @@ COMBINECLIPS_AUDIO = os.path.join('staticdata', 'templates', 'SyntheticDeception
 COMBINECLIPS_AUDIO_FADE_DURATION = 5
 
 # ----------------------------------------------------------------------------------------------------
-# j_generate_title/generate_title
+# j_generate_title
 
 GENERATETITLE_NAME = 'j_generate_title'
 GENERATETITLE_FOLDER = os.path.join(VARDATA_DATE_FOLDER, GENERATETITLE_NAME)
@@ -375,14 +431,14 @@ GENERATETITLE_OPENAI_TIMEOUT = 60
 GENERATETITLE_NUM_TITLE_CHARACTERS = 60
 
 # ----------------------------------------------------------------------------------------------------
-# k_upload_clip/upload_video
+# k_upload_clip
 
 UPLOADCLIP_NAME = 'k_upload_clip'
 UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
 UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
 # ----------------------------------------------------------------------------------------------------
-# l_upload_thumbnail/upload_thumbnail
+# l_upload_thumbnail
 
 UPLOADTHUMBNAIL_NAME = 'l_upload_thumbnail'
 UPLOADTHUMBNAIL_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADTHUMBNAIL_NAME)

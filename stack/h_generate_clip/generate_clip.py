@@ -1,8 +1,7 @@
 import logging
 import os
 
-from stack.h_generate_clip.primary.clip_primary import run as run_clips_primary
-from stack.h_generate_clip.secondary.clip_secondary import run as run_clips_secondary
+from stack.h_generate_clip.v1.clip_v1 import run as run_clip_v1
 
 from config import config
 
@@ -38,11 +37,11 @@ def run(clean, input_list):
 
     for module in config.GENERATECLIP_MODULES:
 
-        if module == "primary":
-            output_list_all += run_clips_primary(input_list)
+        if module == "v1":
+            output_list_all += run_clip_v1(input_list)
 
-        elif module == "secondary":
-            output_list_all += run_clips_secondary(input_list)
+        else:
+            logging.error(f'Unknown module: {module}')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'{config.GENERATECLIP_NAME} ended')

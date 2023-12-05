@@ -2,9 +2,7 @@ import logging
 import yaml
 import os
 
-from common import utils
 from common.pydantic.digest import Digest
-from common.pydantic.vidinfo import VidInfo, Chapter
 from config import config
 
 

@@ -2,7 +2,7 @@ import logging
 import yaml
 import os
 
-from common.pydantic.vidinfo import VidInfo
+from common.pydantic.clipinfo import VidInfo
 from common.googleapi.youtubedataapi import get_authenticated_service, upload_thumbnail
 from config import config
 from keys import keys

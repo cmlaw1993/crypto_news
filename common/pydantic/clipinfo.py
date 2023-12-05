@@ -4,12 +4,11 @@ from typing import List
 
 
 class Chapter(BaseModel):
-    ts: int
-    title: str
     digest: str
+    ts: int
 
 
-class VidInfo(BaseModel):
+class ClipInfo(BaseModel):
     id: str
     clip: str
     thumbnail: Optional[str] = None

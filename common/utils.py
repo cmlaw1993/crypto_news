@@ -2,6 +2,15 @@ import subprocess
 import tiktoken
 import urllib.parse
 from PIL import Image
+import math
+
+
+def round_down(number, x):
+    return math.floor(number / x) * x
+
+
+def round_up(number, x):
+    return math.ceil(number / x) * x
 
 
 def to_datetime_str(dt):
@@ -64,13 +73,13 @@ def calculate_image_bounds(image_path):
     return min_x, max_x, min_y, max_y
 
 
-def get_video_duration(video_path):
+def get_video_audio_duration(video_audio_path):
     command = [
         'ffprobe',
         '-v', 'error',
         '-show_entries', 'format=duration',
         '-of', 'default=noprint_wrappers=1:nokey=1',
-        video_path
+        video_audio_path
     ]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
@@ -79,6 +88,14 @@ def get_video_duration(video_path):
 
     try:
         duration = float(result.stdout)
-        return int(round(duration))
+        return duration
     except ValueError:
         return None
+
+
+def get_video_duration(video_path):
+    return get_video_audio_duration(video_path)
+
+
+def get_audio_duration(audio_path):
+    return get_video_audio_duration(audio_path)

@@ -43,11 +43,9 @@ def run(input_list):
 
     for digest in digests:
 
-        num_lines = 1 + len(digest.content)
-
         digest.media = dict()
 
-        for idx in range(num_lines):
+        for idx in range(len(digest.content)):
             media = dict()
             image_idx = idx % len(config.DOWNLOADMEDIA_DUMMY_IMAGE)
             media['id'] = config.DOWNLOADMEDIA_DUMMY_IMAGE[image_idx]
