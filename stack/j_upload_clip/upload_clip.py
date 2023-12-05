@@ -5,7 +5,7 @@ import os
 from common.googleapi.youtubedataapi import get_authenticated_service, upload_video
 
 from config import config
-from common.pydantic.clipinfo import VidInfo
+from common.pydantic.clipdata import VidInfo
 
 
 def run(clean, input_list):

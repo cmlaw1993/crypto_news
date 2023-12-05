@@ -7,7 +7,7 @@ from langchain.chat_models import ChatOpenAI
 
 from config import config
 from common.pydantic.digest import Digest
-from common.pydantic.clipinfo import VidInfo
+from common.pydantic.clipdata import VidInfo
 from keys import keys
 
 

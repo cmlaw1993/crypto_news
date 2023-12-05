@@ -8,7 +8,7 @@ class Chapter(BaseModel):
     ts: int
 
 
-class ClipInfo(BaseModel):
+class ClipData(BaseModel):
     id: str
     clip: str
     thumbnail: Optional[str] = None

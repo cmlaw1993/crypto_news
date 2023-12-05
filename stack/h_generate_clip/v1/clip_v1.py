@@ -8,8 +8,8 @@ from stack.h_generate_clip.v1.clip_v1_secondary import run as run_secondary
 
 from common import utils
 from common.pydantic.digest import Digest
-from common.pydantic.clipinfo import ClipInfo
-from common.pydantic.clipinfo import Chapter
+from common.pydantic.clipdata import ClipData
+from common.pydantic.clipdata import Chapter
 from config import config
 
 
@@ -228,7 +228,7 @@ def run(input_list):
     logging.info(f'[END  ] Save digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Create clip info')
+    logging.info(f'[BEGIN] Create clip data')
 
     chapters = list()
 
@@ -256,23 +256,23 @@ def run(input_list):
         chapter = Chapter(**chapter_data)
         chapters.append(chapter)
 
-    clipinfo_data = {
-        'id': f'clipinfo.{config.ACTIVE_DATE_STR}.yaml',
+    clipdata_data = {
+        'id': f'clipdata.{config.ACTIVE_DATE_STR}.yaml',
         'clip': final_relative_path,
         'chapters': chapters
     }
 
-    clipinfo = ClipInfo(**clipinfo_data)
+    clipdata = ClipData(**clipdata_data)
 
-    output_relative_path = os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, clipinfo.id)
-    output_path = os.path.join(config.GENERATECLIP_FOLDER, clipinfo.id)
+    output_relative_path = os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, clipdata.id)
+    output_path = os.path.join(config.GENERATECLIP_FOLDER, clipdata.id)
 
     with open(output_path, 'w') as file:
-        yaml.dump(clipinfo.model_dump(), file, sort_keys=False)
+        yaml.dump(clipdata.model_dump(), file, sort_keys=False)
 
-    logging.info(f'Saved: {clipinfo.id}')
+    logging.info(f'Saved: {clipdata.id}')
 
-    logging.info(f'[END  ] Create clip info')
+    logging.info(f'[END  ] Create clip data')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Clean temporary files')
