@@ -7,7 +7,7 @@ from langchain.chat_models import ChatOpenAI
 
 from config import config
 from common.pydantic.digest import Digest
-from common.pydantic.clipdata import VidInfo
+from common.pydantic.clipdata import ClipData
 from keys import keys
 
 
@@ -47,85 +47,27 @@ def run(clean, input_list):
     logging.info(f'[END  ] Clean')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Load vidinfo')
+    logging.info(f'[BEGIN] Load clipdata')
 
     if len(input_list) != 1:
-        logging.error('Received multiple vidinfo as input although only one expected')
+        logging.error('Received multiple clipdata as input although only one expected')
 
     file_path = os.path.join(config.DATA_FOLDER, input_list[0])
     with open(file_path, 'r') as yaml_file:
         yaml_data = yaml.safe_load(yaml_file)
 
-    vidinfo = VidInfo(**yaml_data)
+    clipdata = ClipData(**yaml_data)
 
-    logging.info(f'[END  ] Load vidinfo')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Generate title')
-
-    sorted_chapters = sorted(vidinfo.chapters, key=lambda x: x.ts)
-
-    system_template = f'You are a top editor for a cryptocurrency news agency.'
-    system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
-
-    chapters = ''
-    chapters += f'Chapter 0: {sorted_chapters[1].title}\n'
-    chapters += f'Chapter 1: {sorted_chapters[2].title}\n'
-    chapters += f'Chapter 2: {sorted_chapters[3].title}\n'
-
-    human_template = f'The following is a list of chapters that are in a video\n'\
-                     f'\n' \
-                     f'{chapters}\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'\n' \
-                     f'Your task is generate a title for the video.\n' \
-                     f'The video title must be strictly within {config.GENERATETITLE_NUM_TITLE_CHARACTERS} characters.\n' \
-                     f'To generate the title, follow the following instructions:\n' \
-                     f'1. Summarize each chapter and rewrite in an active voice.\n'\
-                     f'2. Fit all three summarized chapters together in the form of "<Chapter 0> | <Chapter 1> | <Chapter 2>".\n' \
-                     f'3. If the title is above {config.GENERATETITLE_NUM_TITLE_CHARACTERS} characters, remove <Chapter 2>.\n' \
-                     f'4. If the title is above {config.GENERATETITLE_NUM_TITLE_CHARACTERS} characters, remove <Chapter 1> and <Chapter 2>.\n' \
-                     f'5. In all cases, the title must be written in an active voice.\n' \
-                     f'6. Simply state your answer without forming a sentence.' \
-                     f'\n'
-
-    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-
-    chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-    prompt = chat_prompt.format_prompt().to_messages()
-
-    chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
-                      model_name=config.GENERATETITLE_OPENAI_MODEL,
-                      temperature=config.GENERATETITLE_OPENAI_TEMPERATURE,
-                      request_timeout=config.GENERATETITLE_OPENAI_TIMEOUT)
-    res = chat(prompt)
-
-    vid_title = res.content
-
-    # if len(vid_title) > config.GENERATETITLE_NUM_TITLE_CHARACTERS:
-    #     chs = vid_title.split(' | ')
-    #     vid_title = f'{chs[0]} | {chs[1]}'
-    #
-    # if len(vid_title) > config.GENERATETITLE_NUM_TITLE_CHARACTERS:
-    #     chs = vid_title.split(' | ')
-    #     vid_title = f'{chs[0]}'
-
-    vidinfo.title = vid_title
-
-    logging.info(len(vidinfo.title))
-
-    logging.info(f'[END  ] Generate title')
+    logging.info(f'[END  ] Load clipdata')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load digests')
 
+    sorted_chapters = sorted(clipdata.chapters, key=lambda x: x.ts)
+
     digests = list()
 
-    for idx, chapter in enumerate(vidinfo.chapters):
-        if idx == 0:
-            continue
+    for idx, chapter in enumerate(sorted_chapters):
 
         digest_path = os.path.join(config.DATA_FOLDER, chapter.digest)
         with open(digest_path, 'r') as yaml_file:
@@ -137,92 +79,121 @@ def run(clean, input_list):
     logging.info(f'[END  ] Load digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Deduce main actor')
+    logging.info(f'[BEGIN] Generate short titles')
 
-    main_actors = list()
+    short_titles = list()
 
     for digest in digests:
 
-        system_template = f'You are a top editor for a cryptocurrency news agency.'
-        system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
+        trailer = ' | Daily Crypto News'
+        max_len = config.GENERATETITLE_TITLE_NUM_CHARACTERS - len(trailer)
 
-        human_template = f'{digest.title}\n' \
-                         f'\n' \
-                         f'Deduce the single main actor of the news title.\n' \
-                         f'Simply return the name without forming a sentence\n' \
-                         f'\n'
+        retries = config.GENERATETITLE_TITLE_NUM_RETRIES
 
-        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+        article_str = ''
+        for line in digest.content:
+            article_str += line
+            if article_str[-1] != '.':
+                article_str += '.'
+            article_str += ' '
 
-        chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
-        prompt = chat_prompt.format_prompt().to_messages()
+        short_title = None
 
-        chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
-                          model_name=config.GENERATETITLE_OPENAI_MODEL,
-                          temperature=config.GENERATETITLE_OPENAI_TEMPERATURE,
-                          request_timeout=config.GENERATETITLE_OPENAI_TIMEOUT)
-        res = chat(prompt)
+        while retries > 0:
 
-        main_actors.append(res.content)
+            system_template = f'You are a top editor for a cryptocurrency news agency.'
+            system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
-    logging.info(f'[END  ] Deduce main actor')
+            human_template = f'The following is an article\n'\
+                             f'\n' \
+                             f'{article_str}\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'\n' \
+                             f'Your task is to reword the title for a Youtube video, such that the title would attract views.\n' \
+                             f'The reworded title must be in an active voice.\n'\
+                             f'The reworded title must be within {max_len} characters.\n' \
+                             f'Simply state your answer without forming a sentence.\n' \
+                             f'\n'
+
+            human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+            chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
+            prompt = chat_prompt.format_prompt().to_messages()
+
+            chat = ChatOpenAI(openai_api_key=keys.OPENAI_KEY_0,
+                              model_name=config.GENERATETITLE_OPENAI_MODEL,
+                              temperature=config.GENERATETITLE_OPENAI_TEMPERATURE,
+                              request_timeout=config.GENERATETITLE_OPENAI_TIMEOUT)
+            res = chat(prompt)
+
+            short_title = res.content
+
+            if short_title[0] == '"' or short_title[0] == '\'':
+                short_title = short_title[1:]
+
+            if short_title[-1] == '"' or short_title[-1] == '\'':
+                short_title = short_title[:-1]
+
+            short_title_trailer = short_title + trailer
+
+            if len(short_title_trailer) <= config.GENERATETITLE_TITLE_NUM_CHARACTERS:
+                break
+
+            retries -= 1
+
+        if retries == 0:
+            logging.error(f'Unable to generate title.  Retry limit reached.')
+
+        short_titles.append(short_title)
+
+        logging.info(f'Original title : {digest.title}')
+        logging.info(f'Generated title: {short_title}')
+
+    clipdata.title = short_titles[0] + trailer
+
+    logging.info(f'Video title: {clipdata.title}')
+
+    logging.info(f'[END  ] Generate title')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Generate description')
 
-    description = ''
+    # Add introduction
 
-    # Add first primary article contents
-
-    for line in digests[0].content:
-        description += f'{line}\n'
-    description += f'\n'
-
-    # Add tags
-
-    tags = set()
-
-    description += '#News #Crypto #Bitcoin #Ethereum '
-    tags.add('News')
-    tags.add('Crypto')
-    tags.add('Bitcoin')
-    tags.add('Ethereum')
-
-    for actor in main_actors:
-        tmp = actor.replace(' ', '')
-        if tmp not in tags:
-            description += f'#{tmp} '
+    description = 'Welcome to The New Satellite, your quick and reliable source for the latest happenings in the world of cryptocurrencies.\n'
+    description += '\n'
+    description += 'In today\'s edition:\n'
     description += '\n'
 
     # Add timestamps
 
+    description += '0:00 Intro\n'
     for idx, chapter in enumerate(sorted_chapters):
-        description += f'{format_time(chapter.ts)} {chapter.title}\n'
+        description += f'{format_time(chapter.ts)} {short_titles[idx]}\n'
     description += f'\n'
 
-    # Add disclaimer
+    # Add tags
 
-    description += 'Disclaimer:'
-    description += 'The information provided in this video is for educational purposes and shall not be misconstrued' \
-                   ' as financial advice. The New Satellite assumes no liability for any actions taken based on'\
-                   ' the presented content.'
-    description += f'\n'
+    for tag in config.GENERATETITLE_TAGS:
+        description += f'#{tag} '
+    description += '\n'
 
-
-    vidinfo.description = description
+    clipdata.description = description
 
     logging.info(f'[END  ] Generate description')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Save vidinfo')
+    logging.info(f'[BEGIN] Save clipdata')
 
-    file_path = os.path.join(config.GENERATETITLE_FOLDER, vidinfo.id)
+    file_path = os.path.join(config.GENERATETITLE_FOLDER, clipdata.id)
     with open(file_path, 'w') as file:
-        yaml.dump(vidinfo.model_dump(), file, sort_keys=False)
+        yaml.dump(clipdata.model_dump(), file, sort_keys=False)
 
-    logging.info(f'[END  ] Save vidinfo')
+    logging.info(f'[END  ] Save clipdata')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'{config.GENERATETITLE_NAME} ended')
 
-    return [os.path.join(config.GENERATETITLE_RELATIVE_FOLDER, vidinfo.id)]
+    return [os.path.join(config.GENERATETITLE_RELATIVE_FOLDER, clipdata.id)]

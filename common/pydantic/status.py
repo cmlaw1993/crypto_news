@@ -16,7 +16,6 @@ class Status(BaseModel):
     review_digest: StatusData
     download_media: StatusData
     generate_clip: StatusData
-    combine_clips: StatusData
     generate_title: StatusData
     upload_clip: StatusData
     upload_thumbnail: StatusData

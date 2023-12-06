@@ -231,7 +231,7 @@ def run(input_list):
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
         prompt = chat_prompt.format_prompt().to_messages()
 
-        chat = chats[i % 2]
+        chat = chats[i % len(chats)]
         res = chat(prompt)
 
         answer = res.content

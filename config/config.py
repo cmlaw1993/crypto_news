@@ -413,7 +413,17 @@ GENERATETITLE_OPENAI_MODEL = 'gpt-4-1106-preview'
 GENERATETITLE_OPENAI_TEMPERATURE = 0
 GENERATETITLE_OPENAI_TIMEOUT = 60
 
-GENERATETITLE_NUM_TITLE_CHARACTERS = 60
+GENERATETITLE_TITLE_NUM_CHARACTERS = 60
+GENERATETITLE_TITLE_NUM_RETRIES = 5
+
+GENERATETITLE_TAGS = [
+    'News',
+    'Cryptonews',
+    'Crypto',
+    'Bitcoin',
+    'Ethereum',
+    'ETF'
+]
 
 # ----------------------------------------------------------------------------------------------------
 # j_upload_clip
