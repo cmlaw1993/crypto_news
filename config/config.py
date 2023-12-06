@@ -432,6 +432,15 @@ UPLOADCLIP_NAME = 'j_upload_clip'
 UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
 UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
+UPLOADCLIP_TAGS = [
+    'News',
+    'Cryptonews',
+    'Crypto',
+    'Bitcoin',
+    'Ethereum',
+    'ETF'
+]
+
 # ----------------------------------------------------------------------------------------------------
 # k_upload_thumbnail
 

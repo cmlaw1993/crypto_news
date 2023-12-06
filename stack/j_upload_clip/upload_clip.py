@@ -38,23 +38,23 @@ def run(clean, input_list):
     logging.info(f'[END  ] Clean')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Load vidinfo')
+    logging.info(f'[BEGIN] Load clipdata')
 
     if len(input_list) != 1:
-        logging.error('Received multiple vidinfo as input although only one expected')
+        logging.error('Received multiple clipdata as input although only one expected')
 
     file_path = os.path.join(config.DATA_FOLDER, input_list[0])
     with open(file_path, 'r') as yaml_file:
         yaml_data = yaml.safe_load(yaml_file)
 
-    vidinfo = VidInfo(**yaml_data)
+    clipdata = ClipData(**yaml_data)
 
-    logging.info(f'[END  ] Load vidinfo')
+    logging.info(f'[END  ] Load clipdata')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Check clip existance')
 
-    clip_path = os.path.join(config.DATA_FOLDER, vidinfo.clip)
+    clip_path = os.path.join(config.DATA_FOLDER, clipdata.clip)
 
     if not os.path.exists(clip_path):
         logging.error(f'Clip does not exists: {clip_path}')
@@ -64,13 +64,12 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Upload clip')
 
-    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET,
-                                        config.YOUTUBEDATAAPI_OAUTH)
+    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET, config.YOUTUBEDATAAPI_OAUTH)
 
     clip_file = clip_path
-    title = vidinfo.title
-    description = vidinfo.description
-    tags = ['crypto', 'bitcoin', 'ethereum', 'news']
+    title = clipdata.title
+    description = clipdata.description
+    tags = config.UPLOADCLIP_TAGS
     category = '25' # News and politics
     privacy_status = 'private'
     public_stats_viewable = 'false'
@@ -80,15 +79,15 @@ def run(clean, input_list):
     youtube_id = upload_video(youtube, clip_file, title, description, tags, category, privacy_status,
                               public_stats_viewable, made_for_kids, self_declared_made_for_kids)
 
-    vidinfo.youtube_id = youtube_id
+    clipdata.youtube_id = youtube_id
 
-    file_path = f'{config.UPLOADCLIP_FOLDER}/{vidinfo.id}'
+    file_path = f'{config.UPLOADCLIP_FOLDER}/{clipdata.id}'
     with open(file_path, 'w') as file:
-        yaml.dump(vidinfo.model_dump(), file, sort_keys=False)
+        yaml.dump(clipdata.model_dump(), file, sort_keys=False)
 
     logging.info(f'[END  ] Upload clip')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'{config.UPLOADCLIP_NAME} ended')
 
-    return [f'{config.UPLOADCLIP_RELATIVE_FOLDER}/{vidinfo.id}']
+    return [f'{config.UPLOADCLIP_RELATIVE_FOLDER}/{clipdata.id}']
