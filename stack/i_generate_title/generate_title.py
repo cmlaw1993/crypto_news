@@ -85,8 +85,8 @@ def run(clean, input_list):
 
     for digest in digests:
 
-        trailer = ' | Daily Crypto News'
-        max_len = config.GENERATETITLE_TITLE_NUM_CHARACTERS - len(trailer)
+        subtitle = config.GENERATETITLE_TITLE_SUBTITLE
+        max_len = config.GENERATETITLE_TITLE_NUM_CHARACTERS - len(subtitle)
 
         retries = config.GENERATETITLE_TITLE_NUM_RETRIES
 
@@ -136,9 +136,9 @@ def run(clean, input_list):
             if short_title[-1] == '"' or short_title[-1] == '\'':
                 short_title = short_title[:-1]
 
-            short_title_trailer = short_title + trailer
+            short_title_subtitle = short_title + subtitle
 
-            if len(short_title_trailer) <= config.GENERATETITLE_TITLE_NUM_CHARACTERS:
+            if len(short_title_subtitle) <= config.GENERATETITLE_TITLE_NUM_CHARACTERS:
                 break
 
             retries -= 1
@@ -151,7 +151,7 @@ def run(clean, input_list):
         logging.info(f'Original title : {digest.title}')
         logging.info(f'Generated title: {short_title}')
 
-    clipdata.title = short_titles[0] + trailer
+    clipdata.title = short_titles[0] + subtitle
 
     logging.info(f'Video title: {clipdata.title}')
 
