@@ -113,28 +113,22 @@ AUDIO_CODEC = 'aac'
 AUDIO_BITRATE = '384k'
 
 # ####################################################################################################
-# youtube data api
-
-YOUTUBEDATAAPI_SECRET = "/home/dennis/Workspace/crypto_news/keys/googleapi/test_secret.json"
-YOUTUBEDATAAPI_OAUTH = "/home/dennis/Workspace/crypto_news/keys/googleapi/test_oauth.json"
-
-# ####################################################################################################
 # status
 
 STATUS_FILE = f'{VARDATA_DATE_FOLDER}/status.yaml'
 
 STATUS_DEFAULT_VALUE = {
-    'download_news':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'news_to_vectordb': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'get_main_topic':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'construct_digest': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'curate_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'review_digest':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'download_media':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'generate_clip':    {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'generate_title':   {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'upload_clip':      {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
-    'upload_thumbnail': {'enable': True, 'weekend': True, 'append_output': False, 'input': []},
+    'download_news':    {'enable': True, 'append_output': False, 'input': []},
+    'news_to_vectordb': {'enable': True, 'append_output': False, 'input': []},
+    'get_main_topic':   {'enable': True, 'append_output': False, 'input': []},
+    'construct_digest': {'enable': True, 'append_output': False, 'input': []},
+    'curate_digest':    {'enable': True, 'append_output': False, 'input': []},
+    'review_digest':    {'enable': True, 'append_output': False, 'input': []},
+    'download_media':   {'enable': True, 'append_output': False, 'input': []},
+    'generate_clip':    {'enable': True, 'append_output': False, 'input': []},
+    'generate_title':   {'enable': True, 'append_output': False, 'input': []},
+    'upload_clip':      {'enable': True, 'append_output': False, 'input': []},
+    'upload_thumbnail': {'enable': True, 'append_output': False, 'input': []},
 }
 
 # ####################################################################################################

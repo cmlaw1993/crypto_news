@@ -180,10 +180,6 @@ if __name__ == '__main__':
             log_info_alert(f'# Config Disabled')
             continue
 
-        if day in [5, 6] and st.weekend == False:
-            log_info_alert(f'# Disabled for weekend')
-            continue
-
         start_time = time.time()
 
         input_list = list(st.input)
