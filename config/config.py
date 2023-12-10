@@ -287,12 +287,12 @@ DOWNLOADMEDIA_MODULES = [
 ]
 
 DOWNLOADMEDIA_DUMMY_IMAGE = [
-    'staticdata/dummy/dummyImage0.jpg',
-    'staticdata/dummy/dummyVideo0.mov',
-    'staticdata/dummy/dummyImage1.jpg',
-    'staticdata/dummy/dummyVideo1.mp4',
-    'staticdata/dummy/dummyImage2.jpg',
-    'staticdata/dummy/dummyVideo2.mp4',
+    'staticdata/media/dummy/dummyImage0.jpg',
+    'staticdata/media/dummy/dummyVideo0.mov',
+    'staticdata/media/dummy/dummyImage1.jpg',
+    'staticdata/media/dummy/dummyVideo1.mp4',
+    'staticdata/media/dummy/dummyImage2.jpg',
+    'staticdata/media/dummy/dummyVideo2.mp4',
 ]
 
 DOWNLOADMEDIA_SEMIAUTO_OPENAI_MODEL = 'gpt-4-1106-preview'
