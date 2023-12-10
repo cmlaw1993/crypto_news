@@ -208,6 +208,7 @@ GETMAINTOPIC_MODULES = [
 ]
 
 GETMAINTOPIC_RANK_SOURCE_RANK = {
+    'reuters': 11,
     'cointelegraph': 10,
     'coindesk': 9,
     'beincrypto': 8,
@@ -219,7 +220,7 @@ GETMAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
 GETMAINTOPIC_RANK_OPENAI_TEMPERATURE = 0
 GETMAINTOPIC_RANK_OPENAI_TIMEOUT = 300
 
-GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS = 5
+GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS = 3
 
 MAINTOPIC_RANK_MAX_TOPICS = 20
 
@@ -265,7 +266,7 @@ CURATEDIGEST_OPENAI_TEMPERATURE = 0
 CURATEDIGEST_OPENAI_TIMEOUT = 60
 
 CURATEDIGEST_NUM_PRIMARY = 3
-CURATEDIGEST_NUM_SECONDARY = 5
+CURATEDIGEST_NUM_SECONDARY = 10
 
 # ----------------------------------------------------------------------------------------------------
 # f_review_digest
@@ -328,7 +329,7 @@ GENERATECLIP_V1_OUTRO_OVERLAP_DURATION = 0.5
 
 GENERATECLIP_V1_LOGO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'Logo.png')
 
-GENERATECLIP_V1_INTRO_TRANSITiON = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'IntroTransition.wav')
+GENERATECLIP_V1_INTRO_TRANSITION_AUDIO = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'audio', 'IntroTransition.wav')
 
 GENERATECLIP_V1_PRIMARY_MEDIA_TRANSITION = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'PrimaryMediaTransition.mov')
 GENERATECLIP_V1_PRIMARY_BACKGROUND = os.path.join(f'{TEMPLATES_FOLDER}', 'v1', 'video', 'PrimaryBackground.mp4')
