@@ -16,12 +16,8 @@ from _keys import keys
 
 def generate_keywords(digest):
 
-    # lines = [digest.title]
-    lines = list()
-    lines += digest.content
-
     content = ""
-    for idx, line in enumerate(lines):
+    for idx, line in enumerate(digest.content):
         content += f'Line {idx}: {line}\n'
 
     system_template = f'You are a top editor for a cryptocurrency news agency.' \
@@ -67,34 +63,18 @@ def generate_keywords(digest):
 
     media = dict()
 
-    # Add a dummy entry for the title
-
-    digest_type = digest.id.split('.')[1]
-    priority = digest.id.split('.')[2]
-    id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.0.Title'
-
-    media_data = {
-        'id': id,
-        'keyword': '',
-        'source': '',
-        'author': '',
-        'credit': '',
-        'license': '',
-        'effects': 'ZoomOutCenter'
-    }
-
-    media[0] = Media(**media_data)
-
     # Add entries returned from openai
 
     for results in line_results:
 
         line_result = results.split(':')
 
-        line_idx = int(line_result[0]) + 1
+        line_idx = int(line_result[0])
 
         keyword = line_result[1].strip()
 
+        digest_type = digest.id.split('.')[1]
+        priority = digest.id.split('.')[2]
         id = f'{config.DOWNLOADMEDIA_RELATIVE_FOLDER}/media.{digest_type}.{priority:02}.{line_idx}.{utils.sanitize_file_name(keyword)}'
 
         media_data = {
@@ -172,16 +152,16 @@ def search_media(digest):
         pages += f' \"https://elements.envato.com/stock-video/{utils.url_encode(media.keyword)}\"'
         pages += f' \"https://www.shutterstock.com/video/search/{utils.url_encode(media.keyword)}?aspect_ratio=16%3A9\"'
         # pages += f' \"https://www.dreamstime.com/stock-footage/{utils.url_encode(media.keyword)}.html\"'
-        pages += f' \"https://www.pond5.com/search?kw={utils.url_encode(media.keyword)}&media=footage\"'
+        # pages += f' \"https://www.pond5.com/search?kw={utils.url_encode(media.keyword)}&media=footage\"'
 
         # Images
-        pages += f' \"https://commons.wikimedia.org/w/index.php?search={utils.url_encode(media.keyword)}&title=Special:MediaSearch&go=Go&type=image\"'
-        pages += f' \"https://www.flickr.com/search/?safe_search=3&license=2%2C3%2C4%2C5%2C6%2C9&text={utils.url_encode(media.keyword)}\"'
+        # pages += f' \"https://commons.wikimedia.org/w/index.php?search={utils.url_encode(media.keyword)}&title=Special:MediaSearch&go=Go&type=image\"'
+        # pages += f' \"https://www.flickr.com/search/?safe_search=3&license=2%2C3%2C4%2C5%2C6%2C9&text={utils.url_encode(media.keyword)}\"'
         pages += f' \"https://www.freepik.com/search?format=search&last_filter=orientation&orientation=landscape&query={utils.url_encode(media.keyword)}&type=photo\"'
         pages += f' \"https://elements.envato.com/photos/{utils.url_encode(media.keyword)}\"'
         pages += f' \"https://www.shutterstock.com/search/{utils.url_encode(media.keyword)}?image_type=photo\"'
         # pages += f' \"https://www.dreamstime.com/photos-images/{utils.url_encode(media.keyword)}.html\"'
-        pages += f' \"https://www.pond5.com/search?kw={utils.url_encode(media.keyword)}&media=photo\"'
+        # pages += f' \"https://www.pond5.com/search?kw={utils.url_encode(media.keyword)}&media=photo\"'
 
         ret = os.system(f'firefox {pages} &')
         if os.WEXITSTATUS(ret) != 0:
@@ -326,18 +306,6 @@ def run(input_list):
             logging.info(f'Media does not exists.')
 
     logging.info(f'[END  ] Check if media exists')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Review digests')
-
-    files = [f for f in os.listdir(config.DOWNLOADMEDIA_FOLDER)]
-    files = sorted(files)
-    cmd = ["kate"] + [os.path.join(config.DOWNLOADMEDIA_FOLDER, f) for f in files if 'digest.secondary' in f]
-
-    p = subprocess.Popen(cmd)
-    p.wait()
-
-    logging.info(f'[END  ] Review secondary digests')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     return output_list
