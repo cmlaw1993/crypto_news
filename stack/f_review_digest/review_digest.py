@@ -74,6 +74,9 @@ def run(clean, input_list):
         if matched:
             break
 
+        matched = True
+        continue
+
     logging.info(f'[END  ] Review digest')
 
     logging.info(f'------------------------------------------------------------------------------------------')
