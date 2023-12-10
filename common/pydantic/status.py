@@ -3,7 +3,6 @@ from typing import Dict, List
 
 class StatusData(BaseModel):
     enable: bool
-    weekend: bool
     append_output: bool
     input: List
 
