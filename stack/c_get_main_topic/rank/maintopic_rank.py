@@ -272,9 +272,12 @@ def run(input_list):
 
                 if topic.content == '':
                     topic.content = headline
-                topic.sources.append(source)
+
+                if source not in topic.sources:
+                    topic.sources.append(source)
+                    topic.priority_score += config.GETMAINTOPIC_RANK_SOURCE_RANK[source]
+
                 topic.source_content.append(f'{source}:{topics[idx].content}')
-                topic.priority_score += config.GETMAINTOPIC_RANK_SOURCE_RANK[source]
 
                 used_idx.append(idx)
 
