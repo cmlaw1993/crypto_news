@@ -9,7 +9,7 @@ from langchain.chat_models import ChatOpenAI
 from common.pydantic.digest import Digest
 from common import utils
 from config import config
-from keys import keys
+from _keys import keys
 
 def digest_to_text(article, idx=None):
     contents = ''

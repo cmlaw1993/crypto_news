@@ -11,7 +11,7 @@ from langchain.chat_models import ChatOpenAI
 from common import utils
 from common.pydantic.digest import Digest, Media
 from config import config
-from keys import keys
+from _keys import keys
 
 
 def generate_keywords(digest):

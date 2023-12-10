@@ -5,7 +5,7 @@ import os
 from common.pydantic.clipdata import ClipData
 from common.googleapi.youtubedataapi import get_authenticated_service, upload_thumbnail
 from config import config
-from keys import keys
+from _keys import keys
 
 def run(clean, input_list):
 
@@ -75,7 +75,7 @@ def run(clean, input_list):
 
     thumbnail_path = os.path.join(config.DATA_FOLDER, clipdata.thumbnail)
 
-    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET, config.YOUTUBEDATAAPI_OAUTH)
+    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_CLIENT_SECRET, config.YOUTUBEDATAAPI_OAUTH)
 
     upload_thumbnail(youtube, thumbnail_path, clipdata.youtube_id)
 

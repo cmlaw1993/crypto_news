@@ -9,14 +9,14 @@ import os
 
 from common.pydantic.status import Status
 from common import alert
-from keys import keys
+from _keys import keys
 
 import time
 
 
 def log_info_alert(message):
     logging.info(message)
-    alert.send_message(config.ALERT_ENABLE, keys.TELEGRAM_KEY, config.ALERT_TELEGRAM_ID, message)
+    alert.send_message(config.ALERT_ENABLE, keys.ALERT_TELEGRAM_SENDER_KEY, config.ALERT_TELEGRAM_RECEIVER_ID, message)
 
 
 def global_exception_handler(exc_type, exc_value, exc_traceback):

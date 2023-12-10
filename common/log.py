@@ -5,14 +5,14 @@ import os
 
 from common import alert
 from config import config
-from keys import keys
+from _keys import keys
 
 
 class ExitOnError(logging.Handler):
     def emit(self, record):
         if record.levelno >= logging.ERROR:
             if config.ALERT_ENABLE:
-                alert.send_message(config.ALERT_ENABLE, keys.TELEGRAM_KEY, config.ALERT_TELEGRAM_ID, f'ERROR: {record.message}')
+                alert.send_message(config.ALERT_ENABLE, keys.ALERT_TELEGRAM_SENDER_KEY, config.ALERT_TELEGRAM_RECEIVER_ID, f'ERROR: {record.message}')
             sys.exit(1)
 
 

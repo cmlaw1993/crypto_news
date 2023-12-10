@@ -6,7 +6,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
 from common import utils
-from keys import keys
+from _keys import keys
 
 
 # ####################################################################################################
@@ -14,8 +14,7 @@ from keys import keys
 
 ALERT_ENABLE = True
 
-ALERT_TELEGRAM_ID = "6895080174"
-ALERT_TELEGRAM_KEY = "6895080174"
+ALERT_TELEGRAM_RECEIVER_ID = "6895080174"
 
 # ####################################################################################################
 # active datetime

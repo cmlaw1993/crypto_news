@@ -8,7 +8,7 @@ from langchain.chat_models import ChatOpenAI
 from config import config
 from common.pydantic.digest import Digest
 from common.pydantic.clipdata import ClipData
-from keys import keys
+from _keys import keys
 
 
 def format_time(seconds):

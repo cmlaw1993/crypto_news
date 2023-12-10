@@ -2,14 +2,13 @@ import http.client as httplib
 import httplib2
 import logging
 import random
+import json
 import time
 
-from apiclient.discovery import build
-from apiclient.errors import HttpError
-from apiclient.http import MediaFileUpload
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.file import Storage
-from oauth2client.tools import run_flow
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
 
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
@@ -38,17 +37,12 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 
-def get_authenticated_service(client_secrets_file, credentials_file):
-    flow = flow_from_clientsecrets(client_secrets_file, scope=[YOUTUBE_UPLOAD_SCOPE])
+def get_authenticated_service(client_secret):
 
-    storage = Storage(credentials_file)
-    credentials = storage.get()
+    flow = InstalledAppFlow.from_client_config(json.loads(client_secret), [YOUTUBE_UPLOAD_SCOPE])
+    credentials = flow.run_local_server(port=0)
 
-    if credentials is None or credentials.invalid:
-        credentials = run_flow(flow, storage)
-
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=credentials)
 
 
 def upload_video(youtube, video_file, title, description, tags, category, privacy_status,

@@ -6,6 +6,7 @@ from common.googleapi.youtubedataapi import get_authenticated_service, upload_vi
 
 from config import config
 from common.pydantic.clipdata import ClipData
+from _keys import keys
 
 
 def run(clean, input_list):
@@ -64,7 +65,7 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Upload clip')
 
-    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_SECRET, config.YOUTUBEDATAAPI_OAUTH)
+    youtube = get_authenticated_service(keys.YOUTUBEDATAAPI_CLIENT_SECRET)
 
     clip_file = clip_path
     title = clipdata.title
