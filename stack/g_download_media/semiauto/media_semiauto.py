@@ -273,8 +273,17 @@ def run(input_list):
             search_media(digest)
 
             digest = reload_digest(digest)
+
             if not media_exists(digest):
                 logging.info(f'Media does not exists.')
+                continue
+
+            cont = False
+            for media in digest.media.values():
+                if media.source == '':
+                    logging.info(f'Source not stated.')
+                    cont = True
+            if cont:
                 continue
 
             break
@@ -289,7 +298,7 @@ def run(input_list):
     logging.info(f'[END  ] Crop and resize media')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Check if media exists')
+    logging.info(f'[BEGIN] Check media')
 
     output_list = list()
 
@@ -302,10 +311,15 @@ def run(input_list):
             continue
 
         digest = reload_digest(digest)
-        if not media_exists(digest):
-            logging.info(f'Media does not exists.')
 
-    logging.info(f'[END  ] Check if media exists')
+        if not media_exists(digest):
+            logging.error(f'Media does not exists.')
+
+        for media in digest.media.values():
+            if media.source == '':
+                logging.error(f'Source not stated.')
+
+    logging.info(f'[END  ] Check media')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     return output_list
