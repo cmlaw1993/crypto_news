@@ -208,6 +208,9 @@ GETMAINTOPIC_RANK_SOURCE_RANK = {
     'beincrypto': 8,
     'decrypt': 7,
     'utoday': 6,
+    'coinpedia': 5,
+    'coinedition': 5,
+    'theblock': 5,
 }
 
 GETMAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
