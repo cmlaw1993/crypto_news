@@ -545,9 +545,11 @@ def generate_primary_frag(digest, deficit, padding):
 
     # Generate media fragments
 
-    for idx, line in enumerate(digest.content):
+    sorted_media = [ digest.media[k] for k in sorted(digest.media.keys()) ]
 
-        input_path = os.path.join(config.DATA_FOLDER, digest.media[idx].id)
+    for idx, media in enumerate(sorted_media):
+
+        input_path = os.path.join(config.DATA_FOLDER, media.id)
         media_frag_path = os.path.join(config.GENERATECLIP_FOLDER, f'{id}.{idx}.media_frag.mp4')
 
         create_media_frag(media_durations[idx], input_path, media_frag_path)
