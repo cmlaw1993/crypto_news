@@ -191,6 +191,8 @@ def run(input_list):
 
     for i in range(config.GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS):
 
+        logging.info(f'Running loop {i} of {config.GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS}.')
+
         tmp_common_topics = list()
         tmp_uncommon_topics = list()
 
@@ -276,7 +278,7 @@ def run(input_list):
 
                 used_idx.append(idx)
 
-        if topic is not None:
+        if topic is not None and topic.id != '':
             tmp_common_topics.append(topic.copy())
 
         for idx, topic in enumerate(topics):
