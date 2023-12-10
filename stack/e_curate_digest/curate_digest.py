@@ -107,7 +107,7 @@ def run(clean, input_list):
         day = i + 1
 
         prev_date = utils.to_date_str(config.ACTIVE_DATE - timedelta(days=day))
-        folder = os.path.join(config.VARDATA_FOLDER, prev_date, config.CURATEDIGEST_NAME)
+        folder = os.path.join(config.VARDATA_FOLDER, prev_date, config.REVIEWDIGEST_NAME)
         if not os.path.exists(folder):
             continue
 
