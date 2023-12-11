@@ -171,7 +171,11 @@ def run(clean, input_list):
 
     description += '0:00 Intro\n'
     for idx, chapter in enumerate(sorted_chapters):
-        description += f'{format_time(chapter.ts)} {short_titles[idx]}\n'
+        if '.primary.' in chapter.digest:
+            description += f'{format_time(chapter.ts)} Top Story {idx + 1} - {short_titles[idx]}\n'
+        else:
+            description += f'{format_time(chapter.ts)} Quick Highlights\n'
+            break
     description += f'\n'
 
     # Add tags
