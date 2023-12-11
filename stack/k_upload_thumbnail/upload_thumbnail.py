@@ -75,7 +75,7 @@ def run(clean, input_list):
 
     thumbnail_path = os.path.join(config.DATA_FOLDER, clipdata.thumbnail)
 
-    youtube = get_authenticated_service(config.YOUTUBEDATAAPI_CLIENT_SECRET, config.YOUTUBEDATAAPI_OAUTH)
+    youtube = get_authenticated_service(keys.YOUTUBEDATAAPI_CLIENT_SECRET)
 
     upload_thumbnail(youtube, thumbnail_path, clipdata.youtube_id)
 
