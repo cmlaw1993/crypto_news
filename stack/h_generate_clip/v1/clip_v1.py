@@ -91,50 +91,18 @@ def run(input_list):
     logging.info(f'[END  ] Add exit effects to intro')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Combine intro and primary')
+    logging.info(f'[BEGIN] Combine primary and secondary')
 
-    intro_primary_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.intro_primary.mp4')
-
-    intro_path = config.GENERATECLIP_V1_INTRO
-    trans_path = config.GENERATECLIP_V1_INTRO_TRANSITiON
-
-    trans_start = utils.get_video_duration(intro_path) - 0.5
-    trans_start_ms = trans_start * 1000
-
-    ret = os.system(
-        f'ffmpeg -y'
-        f' -i {intro_path}'
-        f' -i {primary_enter_path}'
-        f' -i {trans_path}'
-        f' -filter_complex "'
-        f'     [0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[vf0][af0];'
-        f'     [2:a]adelay={trans_start_ms}|{trans_start_ms}[a1];'
-        f'     [af0][a1]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0[a];'
-        f' "'
-        f' -map [vf0]'
-        f' -map [a]'
-        f' -vcodec {vcdc} -preset {vpre} -pix_fmt {pix} -color_range {clr} -r {fps} -b:v {br} -bufsize {br}'
-        f' -c:a {acdc} -b:a {abr}'
-        f' {intro_primary_path}'
-    )
-    if os.WEXITSTATUS(ret) != 0:
-        logging.error('Error concatenating primary into intro')
-
-    logging.info(f'[END  ] Combine intro and primary')
-
-    logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Combine secondary into intro, primary')
-
-    intro_primary_secondary_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.intro_primary_secondary.mp4')
+    primary_secondary_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.primary_secondary.mp4')
     trans_duration = config.GENERATECLIP_V1_SECONDARY_TRANSITION_DURATION
-    trans_offset = utils.get_video_duration(intro_primary_path) - (trans_duration / 2)
+    trans_offset = utils.get_video_duration(primary_enter_path) - (trans_duration / 2)
     trans_offset_ms = trans_offset * 1000
 
     trans_audio_path = config.GENERATECLIP_V1_SECONDARY_TRANSITION_AUDIO
 
     ret = os.system(
         f'ffmpeg -y'
-        f' -i {intro_primary_path}'
+        f' -i {primary_enter_path}'
         f' -i {secondary_path}'
         f' -i {trans_audio_path}'
         f' -filter_complex "'
@@ -146,28 +114,28 @@ def run(input_list):
         f' -map [af0]'
         f' -vcodec {vcdc} -preset {vpre} -pix_fmt {pix} -color_range {clr} -r {fps} -b:v {br} -bufsize {br}'
         f' -c:a {acdc} -b:a {abr}'
-        f' {intro_primary_secondary_path}'
+        f' {primary_secondary_path}'
     )
     if os.WEXITSTATUS(ret) != 0:
-        logging.error('Error concatenating secondary into intro, primary')
+        logging.error('Error concatenating primary and secondary')
 
-    logging.info(f'[END  ] Combine secondary into intro, primary')
+    logging.info(f'[END  ] Combine primary and secondary')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Combine outro into intro, primary, secondary')
+    logging.info(f'[BEGIN] Combine outro into primary, secondary')
 
-    intro_primary_secondary_outro_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.intro_primary_secondary_outro.mp4')
+    primary_secondary_outro_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.primary_secondary_outro.mp4')
 
     outro_path = config.GENERATECLIP_V1_OUTRO
 
-    outro_start = utils.get_video_duration(intro_primary_secondary_path) - config.GENERATECLIP_V1_OUTRO_OVERLAP_DURATION
+    outro_start = utils.get_video_duration(primary_secondary_path) - config.GENERATECLIP_V1_OUTRO_OVERLAP_DURATION
 
-    duration = utils.get_video_duration(intro_primary_secondary_path) - config.GENERATECLIP_V1_OUTRO_OVERLAP_DURATION \
+    duration = utils.get_video_duration(primary_secondary_path) - config.GENERATECLIP_V1_OUTRO_OVERLAP_DURATION \
                 + utils.get_video_duration(outro_path)
 
     ret = os.system(
         f'ffmpeg -y'
-        f' -i {intro_primary_secondary_path}'
+        f' -i {primary_secondary_path}'
         f' -i {outro_path}'
         f' -filter_complex "'
         f'     [1:v]setpts=PTS+{outro_start}/TB[v1];'
@@ -178,18 +146,55 @@ def run(input_list):
         f' -map [a]'
         f' -vcodec {vcdc} -preset {vpre} -pix_fmt {pix} -color_range {clr} -r {fps} -t {duration} -b:v {br} -bufsize {br}'
         f' -c:a {acdc} -b:a {abr}'
+        f' {primary_secondary_outro_path}'
+    )
+    if os.WEXITSTATUS(ret) != 0:
+        logging.error('Error concatenating outro into primary, secondary')
+
+    logging.info(f'[END  ] Combine outro into primary, secondary')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Combine intro and primary, secondary, outro')
+
+    # We do this step last as we are using the slower libx264 software encoder to ensure a higher intro quality.
+    # The intro looks pixelated if we use hardware encoders.
+
+    intro_primary_secondary_outro_path = os.path.join(config.GENERATECLIP_FOLDER, f'tmp.intro_primary_secondary_outro.mp4')
+
+    intro_path = config.GENERATECLIP_V1_INTRO
+    trans_audio_path = config.GENERATECLIP_V1_INTRO_TRANSITION_AUDIO
+
+    trans_start = utils.get_video_duration(intro_path) - 0.5
+    trans_start_ms = trans_start * 1000
+
+    ret = os.system(
+        f'ffmpeg -y'
+        f' -i {intro_path}'
+        f' -i {primary_secondary_outro_path}'
+        f' -i {trans_audio_path}'
+        f' -filter_complex "'
+        f'     [0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[vf0][af0];'
+        f'     [2:a]adelay={trans_start_ms}|{trans_start_ms}[a1];'
+        f'     [af0][a1]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0[a];'
+        f' "'
+        f' -map [vf0]'
+        f' -map [a]'
+        f' -vcodec libx264 -pix_fmt {pix} -color_range {clr} -r {fps} -crf 0'
+        f' -c:a {acdc} -b:a {abr}'
         f' {intro_primary_secondary_outro_path}'
     )
     if os.WEXITSTATUS(ret) != 0:
-        logging.error('Error concatenating outro into intro, primary, secondary')
+        logging.error('Error concatenating intro into primary, secondary, outro')
 
-    logging.info(f'[END  ] Combine secondary into intro, primary')
+    logging.info(f'[END  ] Combine intro and primary, secondary, outro')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Combine audio into final clip')
 
     final_path = os.path.join(config.GENERATECLIP_FOLDER, f'clip.{config.ACTIVE_DATE_STR}.mp4')
     final_relative_path = os.path.join(config.GENERATECLIP_RELATIVE_FOLDER, f'clip.{config.ACTIVE_DATE_STR}.mp4')
+
+    duration = utils.get_video_duration(intro_primary_secondary_outro_path)
 
     ret = os.system(
         f'ffmpeg -y'
@@ -201,7 +206,8 @@ def run(input_list):
         f' "'
         f' -map [v]'
         f' -map [a]'
-        f' -vcodec {vcdc} -preset {vpre} -pix_fmt {pix} -color_range {clr} -r {fps} -t {duration} -b:v {br} -bufsize {br}'
+        f' -t {duration}'
+        # f' -vcodec libx264 -preset ultrafast -pix_fmt {pix} -color_range {clr} -r {fps} -t {duration} -crf 51'
         f' -c:a {acdc} -b:a {abr}'
         f' {final_path}'
     )
