@@ -45,7 +45,7 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Calculate start and end datetime')
 
-    start_dt = config.UTC_DATETIME - timedelta(days=1)
+    start_dt = config.UTC_DATETIME - timedelta(days=config.DOWNLOADNEWS_DAYS_AGO)
     end_dt = config.UTC_DATETIME
 
     logging.info(f'utc_active_datetime: {utils.to_datetime_str(config.UTC_DATETIME)}')

@@ -165,6 +165,8 @@ DOWNLOADNEWS_NAME = 'a_download_news'
 DOWNLOADNEWS_FOLDER = os.path.join(VARDATA_FOLDER, ACTIVE_DATE_STR, DOWNLOADNEWS_NAME)
 DOWNLOADNEWS_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, DOWNLOADNEWS_NAME)
 
+DOWNLOADNEWS_DAYS_AGO = 2
+
 DOWNLOADNEWS_MODULES = [
     'cryptonewsapi_alltickernews',
     'cryptonewsapi_generalcryptonews',
@@ -202,15 +204,16 @@ GETMAINTOPIC_MODULES = [
 ]
 
 GETMAINTOPIC_RANK_SOURCE_RANK = {
-    'reuters': 11,
-    'cointelegraph': 10,
-    'coindesk': 9,
-    'beincrypto': 8,
-    'decrypt': 7,
-    'utoday': 6,
-    'coinpedia': 5,
-    'coinedition': 5,
-    'theblock': 5,
+    'reuters': 1,
+    'cointelegraph': 1,
+    'coindesk': 1,
+    'utoday': 1,
+    'coingape': 1,
+    'beincrypto': 1,
+    'decrypt': 1,
+    'coinpedia': 1,
+    'coinedition': 1,
+    'theblock': 1,
 }
 
 GETMAINTOPIC_RANK_OPENAI_MODEL = 'gpt-4-1106-preview'
