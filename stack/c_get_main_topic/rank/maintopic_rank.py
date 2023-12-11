@@ -104,6 +104,15 @@ def run(input_list):
 
         logging.info(f'Screening articles from {source}')
 
+        found = False
+        for topic in topics:
+            if topic.sources[0].lower() == source.lower():
+                found = True
+                break
+        if not found:
+            logging.info(f'No articles found for source: {source}')
+            continue
+
         system_template = f'You are an assistant to a top editor for a cryptocurrency and AI news agency.'
         system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
@@ -150,6 +159,9 @@ def run(input_list):
         res = chat(prompt)
 
         answer = res.content
+
+        logging.info(f'openai answer: {answer}')
+
         ans_lines = answer.split('\n')
 
         last_idx = -1
@@ -202,6 +214,13 @@ def run(input_list):
         topic_str = ''
         idx = 0
         for source in config.GETMAINTOPIC_RANK_SOURCE_RANK.keys():
+            found = False
+            for topic in topics:
+                if topic.sources[0].lower() == source.lower():
+                    found = True
+                    break
+            if not found:
+                continue
             topic_str += f'\n\n\n\n'
             topic_str += f'Source: {source.lower()}\n\n'
             for topic in topics:
@@ -237,6 +256,9 @@ def run(input_list):
         res = chat(prompt)
 
         answer = res.content
+
+        logging.info(f'openai answer: {answer}')
+
         ans_lines = answer.split('\n')
 
         topic = None
@@ -267,7 +289,7 @@ def run(input_list):
             else:
                 parts = line.split('::')
                 idx = extract_int(remove_brackets(parts[0].strip()))
-                source = remove_brackets(parts[1].strip()).lower()
+                source = remove_brackets(parts[1].strip()).lower().replace('source','').replace(':','').strip()
                 headline = remove_brackets(parts[2].strip())
 
                 if topic.content == '':
@@ -281,7 +303,7 @@ def run(input_list):
 
                 used_idx.append(idx)
 
-        if topic is not None and topic.id != '':
+        if topic is not None and len(topic.sources) > 0:
             tmp_common_topics.append(topic.copy())
 
         for idx, topic in enumerate(topics):
