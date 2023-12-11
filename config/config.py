@@ -22,7 +22,7 @@ ALERT_TELEGRAM_RECEIVER_ID = "6895080174"
 ACTIVE_DATE = datetime.strptime(os.getenv('ACTIVE_DATE'), '%Y%m%d')
 
 ACTIVE_TZ = 'Asia/Kuala_Lumpur'
-ACTIVE_HOUR = 6
+ACTIVE_HOUR = 5
 
 PUBLISH_TZ = 'US/Eastern'
 PUBLISH_HOUR = 20
