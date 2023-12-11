@@ -85,6 +85,9 @@ def run(clean, input_list):
 
     for digest in digests:
 
+        if '.primary.' not in digest.id:
+            continue
+
         subtitle = config.GENERATETITLE_TITLE_SUBTITLE
         max_len = config.GENERATETITLE_TITLE_NUM_CHARACTERS - len(subtitle)
 
@@ -172,9 +175,9 @@ def run(clean, input_list):
     description += '0:00 Intro\n'
     for idx, chapter in enumerate(sorted_chapters):
         if '.primary.' in chapter.digest:
-            description += f'{format_time(chapter.ts)} Top Story {idx + 1} - {short_titles[idx]}\n'
+            description += f'{format_time(chapter.ts)} [Top Story {idx + 1}] - {short_titles[idx]}\n'
         else:
-            description += f'{format_time(chapter.ts)} Quick Highlights\n'
+            description += f'{format_time(chapter.ts)} [Quick Highlights]\n'
             break
     description += f'\n'
 
