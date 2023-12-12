@@ -139,7 +139,7 @@ def run(clean, input_list):
             if short_title[-1] == '"' or short_title[-1] == '\'':
                 short_title = short_title[:-1]
 
-            short_title_subtitle = short_title + subtitle
+            short_title_subtitle = subtitle + short_title
 
             if len(short_title_subtitle) <= config.GENERATETITLE_TITLE_NUM_CHARACTERS:
                 break
@@ -154,7 +154,7 @@ def run(clean, input_list):
         logging.info(f'Original title : {digest.title}')
         logging.info(f'Generated title: {short_title}')
 
-    clipdata.title = short_titles[0] + subtitle
+    clipdata.title = subtitle + short_titles[0]
 
     logging.info(f'Video title: {clipdata.title}')
 
