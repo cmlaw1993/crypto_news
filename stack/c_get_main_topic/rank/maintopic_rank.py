@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 import logging
+import pytz
 import yaml
 import re
 
@@ -13,12 +15,7 @@ from _keys import keys
 
 
 def remove_brackets(input_str):
-    ret = input_str
-    if ret[0] in ['(', '{', '<']:
-        ret = ret[1:]
-    if ret[-1] in [')', '}', '>']:
-        ret = ret[:-1]
-    return ret
+    return input_str.replace('(','').replace(')','').replace('{','').replace('}','').replace('<','').replace('>','')
 
 
 def extract_int(input_str):
@@ -39,6 +36,9 @@ def run(input_list):
     articles = list()
     source_title = set()
 
+    start_dt = config.UTC_DATETIME - timedelta(days=config.DOWNLOADNEWS_DAYS_AGO)
+    end_dt = config.UTC_DATETIME
+
     for article_file in sorted(input_list):
         file_path = f'{config.DATA_FOLDER}/{article_file}'
 
@@ -47,13 +47,18 @@ def run(input_list):
 
         article = Article(**yaml_data)
 
-        if article.source.lower() in config.GETMAINTOPIC_RANK_SOURCE_RANK.keys():
+        if article.source.lower() not in config.GETMAINTOPIC_RANK_SOURCE_RANK.keys():
+            continue
 
-            # Remove the same article from different API provider
-            s_t = article.source.lower() + "." + utils.sanitize_file_name(article.title)
-            if s_t not in source_title:
-                source_title.add(s_t)
-                articles.append(article)
+        dt = datetime.strptime(article.datetime, '%Y%m%d_%H%M%S').replace(tzinfo=pytz.utc)
+        if dt < start_dt or dt > end_dt:
+            continue
+
+        # Remove the same article from different API provider
+        s_t = article.source.lower() + "." + utils.sanitize_file_name(article.title)
+        if s_t not in source_title:
+            source_title.add(s_t)
+            articles.append(article)
 
     logging.info(f'[END  ] Load ranked articles')
 
@@ -203,7 +208,7 @@ def run(input_list):
 
     for i in range(config.GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS):
 
-        logging.info(f'Running loop {i} of {config.GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS}.')
+        logging.info(f'Running loop {i+1} of {config.GETMAINTOPIC_RANK_COMMONTOPIC_MAXLOOPS}.')
 
         tmp_common_topics = list()
         tmp_uncommon_topics = list()
@@ -269,7 +274,10 @@ def run(input_list):
             if len(line) < 2:
                 continue
 
-            if line[0] != '\t':
+            if len(line) < 15 and 'Group' in line:
+
+                logging.info('Parse: New group')
+
                 if topic is not None:
                     tmp_common_topics.append(topic.copy())
 
@@ -286,11 +294,15 @@ def run(input_list):
                     time = config.ACTIVE_TIME_STR,
                 )
 
-            else:
+            elif line[0] == '\t' or line[0] == ' ':
                 parts = line.split('::')
                 idx = extract_int(remove_brackets(parts[0].strip()))
-                source = remove_brackets(parts[1].strip()).lower().replace('source','').replace(':','').strip()
+                source = remove_brackets(parts[1].lower().replace(' ','').replace('source','').replace(':','').strip())
                 headline = remove_brackets(parts[2].strip())
+
+                logging.info(f'Parse: idx     : {idx}')
+                logging.info(f'Parse: source  : {source}')
+                logging.info(f'Parse: headline: {headline}')
 
                 if topic.content == '':
                     topic.content = headline
