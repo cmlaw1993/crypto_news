@@ -147,7 +147,7 @@ def run(clean, input_list):
             retries -= 1
 
         if retries == 0:
-            logging.error(f'Unable to generate title.  Retry limit reached.')
+            logging.warning(f'Unable to generate title.  Retry limit reached.  Will proceed with what is given.')
 
         short_titles.append(short_title)
 
