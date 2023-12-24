@@ -136,7 +136,7 @@ def create_media_composite(in_paths, out_path):
         last_tmp_out_path = tmp_out_path
         tmp_out_path = out_path.replace('.mp4', f'.tmp_{i}.mp4')
 
-        start = sum(durations[:i + 1]) - (trans_dur / 2)
+        start = sum(durations[:i + 1]) - (trans_dur / 2) + 0.1
         start_ms = start * 1000
 
         # On the first run, input 0 has no audio
