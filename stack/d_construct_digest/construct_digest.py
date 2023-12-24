@@ -109,12 +109,24 @@ def run(clean, input_list):
                           '\n'
         system_message_prompt = SystemMessagePromptTemplate.from_template(system_template)
 
+        # human_template = 'Topic: {topic}\n' \
+        #                  '\n' \
+        #                  'Please write a news article for the above topic for today.\n' \
+        #                  'The news article must be within {min_num_sentences} to {max_num_sentences} sentences long.\n' \
+        #                  'Each sentence must be within {min_num_words} to {max_num_words} words.\n' \
+        #                  'Each sentence must be void of price speculation and opinions.\n' \
+        #                  'Each sentence must be factual and provide useful information to your target audience.\n' \
+        #                  'Prefer information corroborated from multiple lines of information.\n' \
+        #                  'Prefer objective facts and figures in each of your sentences.\n' \
+        #                  'Do not lift sentences. Paraphrase to avoid plagiarism.\n' \
+        #                  'Ensure a logical continuity between sentences.\n' \
+        #                  'Assume the article is a one-off.\n' \
+        #                  'Write only the contents of the article. Do not write the title.'
         human_template = 'Topic: {topic}\n' \
                          '\n' \
                          'Please write a news article for the above topic for today.\n' \
                          'The news article must be within {min_num_sentences} to {max_num_sentences} sentences long.\n' \
                          'Each sentence must be within {min_num_words} to {max_num_words} words.\n' \
-                         'Each sentence must be void of price speculation and opinions.\n' \
                          'Each sentence must be factual and provide useful information to your target audience.\n' \
                          'Prefer information corroborated from multiple lines of information.\n' \
                          'Prefer objective facts and figures in each of your sentences.\n' \
