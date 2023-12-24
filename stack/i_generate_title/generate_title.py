@@ -165,7 +165,7 @@ def run(clean, input_list):
 
     # Add introduction
 
-    description = 'Welcome to The New Satellite, your quick and reliable source for the latest happenings in the world of cryptocurrencies.\n'
+    description = 'Welcome to TNS, your daily digest of all the latest news in the crypto world. Catch up on everything you need to know from the past 24 hours, all in one convenient and concise video.\n'
     description += '\n'
     description += 'In today\'s edition:\n'
     description += '\n'
@@ -179,6 +179,11 @@ def run(clean, input_list):
         else:
             description += f'{format_time(chapter.ts)} [Quick Highlights]\n'
             break
+    description += f'\n'
+
+    # Add call to action
+
+    description += 'Subscribe and hit the notification bell to receive updates on tomorrow\'s edition.\n'
     description += f'\n'
 
     # Add tags

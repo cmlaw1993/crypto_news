@@ -415,15 +415,12 @@ GENERATETITLE_OPENAI_TIMEOUT = 60
 
 GENERATETITLE_TITLE_NUM_CHARACTERS = 60
 GENERATETITLE_TITLE_NUM_RETRIES = 5
-GENERATETITLE_TITLE_SUBTITLE = 'Daily Crypto News | '
+GENERATETITLE_TITLE_SUBTITLE = 'Daily Crypto Digest | '
 
 GENERATETITLE_TAGS = [
-    'News',
-    'Cryptonews',
+    'DailyCryptoNews',
+    'CryptoNews',
     'Crypto',
-    'Bitcoin',
-    'Ethereum',
-    'ETF'
 ]
 
 # ----------------------------------------------------------------------------------------------------
@@ -434,12 +431,9 @@ UPLOADCLIP_FOLDER = os.path.join(VARDATA_DATE_FOLDER, UPLOADCLIP_NAME)
 UPLOADCLIP_RELATIVE_FOLDER = os.path.join('vardata', ACTIVE_DATE_STR, UPLOADCLIP_NAME)
 
 UPLOADCLIP_TAGS = [
-    'News',
-    'Cryptonews',
+    'DailyCryptoNews',
+    'CryptoNews',
     'Crypto',
-    'Bitcoin',
-    'Ethereum',
-    'ETF'
 ]
 
 # ----------------------------------------------------------------------------------------------------
