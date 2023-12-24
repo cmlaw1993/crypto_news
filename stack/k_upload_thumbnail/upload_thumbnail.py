@@ -23,15 +23,23 @@ def run(clean, input_list):
     logging.info(f'[END  ] Create folders')
 
     logging.info(f'------------------------------------------------------------------------------------------')
-    logging.info(f'[BEGIN] Clean')
+    logging.info(f'[BEGIN] Create symlink')
 
-    if clean == True:
-        os.system(f'rm -rf {config.UPLOADTHUMBNAIL_FOLDER}/*')
-        logging.info(f'Cleaned: {config.UPLOADTHUMBNAIL_FOLDER}')
-    else:
-        logging.info("Clean skipped")
+    src = config.UPLOADTHUMBNAIL_FOLDER
+    dst = os.path.join(os.path.expanduser("~"), 'Downloads', config.UPLOADTHUMBNAIL_NAME)
 
-    logging.info(f'[END  ] Clean')
+    if os.path.islink(dst):
+        try:
+            os.unlink(dst)
+        except:
+            raise Exception(f"Error removing existing symlink: {dst}")
+    try:
+        os.symlink(src, dst)
+        logging.info(f'Created symlink: {dst}')
+    except:
+        raise Exception(f"Error creating symlink: {dst}")
+
+    logging.info(f'[END  ] Create symlink')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Load upload file')
@@ -49,26 +57,40 @@ def run(clean, input_list):
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Prompt thumbnail from user')
 
-    if config.UPLOADTHUMBNAIL_USE_DUMMY:
+    thumbnail_path = None
 
-        clipdata.thumbnail = config.UPLOADTHUMBNAIL_DUMMY_IMAGE
+    while True:
+        thumbnail_name = f'Daily-Crypto-News.png'
+        thumbnail_path = os.path.join(config.UPLOADTHUMBNAIL_FOLDER, thumbnail_name)
 
-    else:
-        while True:
-            thumbnail_name = f'thumbnail.{config.ACTIVE_DATE_STR}.png'
-            thumbnail_path = os.path.join(config.UPLOADTHUMBNAIL_FOLDER, thumbnail_name)
+        logging.info(f'Please create and save thumbnail as {thumbnail_path} and press enter.')
+        input()
 
-            logging.info(f'Please create and save thumbnail as {thumbnail_path} and press enter.')
-            input()
+        if os.path.exists(thumbnail_path):
+            break
 
-            if os.path.exists(thumbnail_path):
-                break
+        logging.warning('Thumbnail does not exists')
 
-            logging.warning('Thumbnail does not exists')
-
-        clipdata.thumbnail = os.path.join(config.UPLOADTHUMBNAIL_RELATIVE_FOLDER, thumbnail_name)
+    clipdata.thumbnail = os.path.join(config.UPLOADTHUMBNAIL_RELATIVE_FOLDER, thumbnail_name)
 
     logging.info(f'[END  ] Prompt thumbnail from user')
+
+    logging.info(f'------------------------------------------------------------------------------------------')
+    logging.info(f'[BEGIN] Set thumbnail metadata')
+
+    write_tool_path = os.path.join('tools', 'png_metadata_writer.py')
+
+    ret = os.system(f'python {write_tool_path} {thumbnail_path}')
+    if os.WEXITSTATUS(ret) != 0:
+        logging.error('Unable to set thumbnail metadata')
+
+    read_tool_path = os.path.join('tools', 'png_metadata_reader.py')
+
+    ret = os.system(f'python {read_tool_path} {thumbnail_path}')
+    if os.WEXITSTATUS(ret) != 0:
+        logging.error('Unable to read thumbnail metadata')
+
+    logging.info(f'[END  ] Set thumbnail metadata')
 
     logging.info(f'------------------------------------------------------------------------------------------')
     logging.info(f'[BEGIN] Upload thumbnail')
